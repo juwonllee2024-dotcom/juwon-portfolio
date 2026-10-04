@@ -29,7 +29,7 @@ In your Cloudflare account, open Workers & Pages, select `juwon-portfolio`, then
 - Production branch: `main`
 - Root directory: repository root
 - Build command: `npm test && npm run build`
-- Deploy command: `npx wrangler deploy`
+- Deploy command: `npx wrangler deploy --config wrangler.jsonc`
 
 This integration is not active merely because configuration exists in GitHub; it requires a successful account-side connection. Once connected, push to `main` to trigger the configured Cloudflare build.
 
