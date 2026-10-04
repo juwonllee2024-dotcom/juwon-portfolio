@@ -8,7 +8,7 @@ Live portfolio: [juwon-portfolio.juwonllee2026.workers.dev](https://juwon-portfo
 
 Source: [juwonllee2024-dotcom/juwon-portfolio](https://github.com/juwonllee2024-dotcom/juwon-portfolio)
 
-Published to the owner's Cloudflare account on 2026-10-03 (America/Los_Angeles). Public assets return HTTP 200; repository metadata and private hosting configuration return HTTP 404. GitHub automatic builds remain pending the account-side authorization and connection described below.
+Published to the owner's Cloudflare account on 2026-10-03 (America/Los_Angeles). Public assets return HTTP 200; repository metadata and private hosting configuration return HTTP 404. The owner's GitHub repository is connected to Cloudflare Workers Builds on production branch `main`.
 
 ## Run and verify
 
@@ -39,7 +39,32 @@ In your Cloudflare account, open Workers & Pages, select `juwon-portfolio`, then
 - Build command: `npm test && npm run build`
 - Deploy command: `npx wrangler deploy --config wrangler.jsonc`
 
-This integration is not active merely because configuration exists in GitHub; it requires a successful account-side connection. Once connected, push to `main` to trigger the configured Cloudflare build.
+The account-side connection is configured. A push to `main` triggers tests, the static build, and deployment. Preview branch builds are disabled to avoid unnecessary builds. Failed tests stop the build before deployment.
+
+## 쉽게 수정하기
+
+가장 쉬운 방법: Codex에 **"내 juwon-portfolio에서 ○○를 바꾸고, 테스트 후 GitHub에 반영해줘"**라고 요청하세요. 변경 사항이 `main`에 반영되면 Cloudflare가 자동 배포합니다. 노트북이나 localhost 서버를 켜둘 필요는 없습니다.
+
+직접 수정하려면 GitHub에서 해당 파일을 열고 연필 버튼(Edit)을 누른 뒤, 변경 내용을 `main`에 커밋하세요. 코드 편집과 테스트가 필요하며, 화면에서 바로 내용을 바꾸는 CMS는 아닙니다.
+
+- 프로젝트 이름·소개·상태·링크: [public/catalog.mjs](https://github.com/juwonllee2024-dotcom/juwon-portfolio/blob/main/public/catalog.mjs)
+- 첫 화면 문구·자기소개·SNS 링크: [public/index.html](https://github.com/juwonllee2024-dotcom/juwon-portfolio/blob/main/public/index.html)
+- 색상·폰트·레이아웃: [public/style.css](https://github.com/juwonllee2024-dotcom/juwon-portfolio/blob/main/public/style.css)
+- 검색·상세 화면 동작: [public/app.mjs](https://github.com/juwonllee2024-dotcom/juwon-portfolio/blob/main/public/app.mjs)
+
+`catalog.mjs`의 각 행은 `[고유 ID, 이름, 소개, 태그, 상태, 선택적 근거]` 순서입니다. 기존 ID는 바꾸지 않고 필요한 문구만 수정하세요. 공개 데모 링크는 파일 아래 `urls`에 추가하세요. 비밀번호·토큰·개인 대화·로컬 파일 경로는 넣지 마세요.
+
+이전 내용으로 되돌리려면 GitHub의 변경 기록을 확인하고 해당 변경을 되돌리는 새 커밋을 만드세요. Git 기록을 강제로 삭제하거나 덮어쓰지 마세요. 자동 배포가 실패하면 Cloudflare의 Deployments에서 빌드 로그를 확인하세요.
+
+## 무료 범위와 한도
+
+2026-10-03에 확인한 Cloudflare 공식 정책 기준:
+
+- 이 포트폴리오는 서버 코드 없는 정적 사이트입니다. 정적 자산 요청은 무료·무제한이며 자산 저장에 추가 비용이 없습니다. [공식 요금 안내](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/)
+- 무료 자동 빌드는 월 3,000분, 동시 1개, 빌드당 최대 20분입니다. 수정·배포 횟수까지 무제한이라는 뜻은 아닙니다. [빌드 한도](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)
+- 파일 수·파일 크기 등 플랫폼 제한도 적용됩니다. 서버 API·SSR·데이터베이스·AI·영상 처리 기능을 추가하면 해당 제품의 요금과 한도를 다시 확인해야 합니다.
+- `workers.dev` 주소를 사용하며 별도 도메인을 구매하지 않았습니다. 무료 요금제를 유지하고 유료 제품을 추가하지 않는 것이 이 구성의 기본 원칙입니다.
+- Cloudflare의 향후 정책 변경이나 영구 무료·무제한 운영까지 보장할 수는 없습니다. 소스는 본인 GitHub와 로컬에 있어 다른 정적 호스팅으로 이전할 수 있습니다.
 
 Official docs: [GitHub integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/github-integration/) · [Static Assets](https://developers.cloudflare.com/workers/static-assets/get-started/)
 
