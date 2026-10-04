@@ -1,0 +1,16 @@
+{
+  "name": "juwon-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "JUWON's independent public portfolio on Cloudflare Workers Static Assets",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/serve.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "check:deploy": "npm run build && wrangler deploy --dry-run"
+  },
+  "devDependencies": {"wrangler": "4.92.0"},
+  "engines": {"node": ">=22"}
+}
