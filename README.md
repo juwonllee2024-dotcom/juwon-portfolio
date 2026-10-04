@@ -2,6 +2,14 @@
 
 Independent public portfolio. Source belongs in **juwonllee2024-dotcom/juwon-portfolio**; hosting belongs in the owner's **Cloudflare account**, using **Workers Static Assets**. No ChatGPT Sites manifest, database, paid AI API, or ChatGPT-hosted runtime is required. No private conversation export is included.
 
+## Public deployment
+
+Live portfolio: [juwon-portfolio.juwonllee2026.workers.dev](https://juwon-portfolio.juwonllee2026.workers.dev)
+
+Source: [juwonllee2024-dotcom/juwon-portfolio](https://github.com/juwonllee2024-dotcom/juwon-portfolio)
+
+Published to the owner's Cloudflare account on 2026-10-03 (America/Los_Angeles). Public assets return HTTP 200; repository metadata and private hosting configuration return HTTP 404. GitHub automatic builds remain pending the account-side authorization and connection described below.
+
 ## Run and verify
 
 ```sh
