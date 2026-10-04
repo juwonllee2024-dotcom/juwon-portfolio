@@ -1,10 +1,12 @@
 # JUWON — The Work
 
-Independent public portfolio. Source belongs in **juwonllee2024-dotcom/juwon-portfolio**; hosting belongs in the owner's **Cloudflare account**, using **Workers Static Assets**. No ChatGPT Sites manifest, database, paid AI API, or ChatGPT-hosted runtime is required. No private conversation export is included.
+Independent public portfolio. Source belongs in **juwonllee2024-dotcom/juwon-portfolio**. The owner approved **GitHub Pages** as the primary host, while preserving the existing **Cloudflare Workers Static Assets** site as a mirror. No ChatGPT Sites manifest, database, paid AI API, or ChatGPT-hosted runtime is required. No private conversation export is included.
 
 ## Public deployment
 
-Live portfolio: [juwon-portfolio.juwonllee2026.workers.dev](https://juwon-portfolio.juwonllee2026.workers.dev)
+GitHub Pages target: [juwonllee2024-dotcom.github.io/juwon-portfolio/](https://juwonllee2024-dotcom.github.io/juwon-portfolio/). Check the latest successful [Pages workflow](https://github.com/juwonllee2024-dotcom/juwon-portfolio/actions/workflows/pages.yml) and the live URL before treating a change as published.
+
+Existing live mirror: [juwon-portfolio.juwonllee2026.workers.dev](https://juwon-portfolio.juwonllee2026.workers.dev)
 
 Source: [juwonllee2024-dotcom/juwon-portfolio](https://github.com/juwonllee2024-dotcom/juwon-portfolio)
 
@@ -43,7 +45,7 @@ The account-side connection is configured. A push to `main` triggers tests, the 
 
 ## 쉽게 수정하기
 
-가장 쉬운 방법: Codex에 **"내 juwon-portfolio에서 ○○를 바꾸고, 테스트 후 GitHub에 반영해줘"**라고 요청하세요. 변경 사항이 `main`에 반영되면 Cloudflare가 자동 배포합니다. 노트북이나 localhost 서버를 켜둘 필요는 없습니다.
+가장 쉬운 방법: Codex에 **"내 juwon-portfolio에서 ○○를 바꾸고, 테스트 후 GitHub에 반영해줘"**라고 요청하세요. 공개 파일 변경 사항이 `main`에 반영되면 GitHub Pages와 기존 Cloudflare 사이트에 자동 배포됩니다. 노트북이나 localhost 서버를 켜둘 필요는 없습니다.
 
 직접 수정하려면 GitHub에서 해당 파일을 열고 연필 버튼(Edit)을 누른 뒤, 변경 내용을 `main`에 커밋하세요. 코드 편집과 테스트가 필요하며, 화면에서 바로 내용을 바꾸는 CMS는 아닙니다.
 
@@ -55,6 +57,17 @@ The account-side connection is configured. A push to `main` triggers tests, the 
 `catalog.mjs`의 각 행은 `[고유 ID, 이름, 소개, 태그, 상태, 선택적 근거]` 순서입니다. 기존 ID는 바꾸지 않고 필요한 문구만 수정하세요. 공개 데모 링크는 파일 아래 `urls`에 추가하세요. 비밀번호·토큰·개인 대화·로컬 파일 경로는 넣지 마세요.
 
 이전 내용으로 되돌리려면 GitHub의 변경 기록을 확인하고 해당 변경을 되돌리는 새 커밋을 만드세요. Git 기록을 강제로 삭제하거나 덮어쓰지 마세요. 자동 배포가 실패하면 Cloudflare의 Deployments에서 빌드 로그를 확인하세요.
+
+## GitHub Pages 설정과 개인정보
+
+- 저장소 Settings > Pages의 배포 Source는 **GitHub Actions**입니다. `.github/workflows/pages.yml`이 `main`의 공개 파일 변경 또는 수동 실행 시 테스트하고 `out/`만 배포합니다.
+- 공개 저장소의 표준 Linux 실행기를 사용하며 별도 유료 서비스나 장기 배포 토큰이 필요하지 않습니다. 배포 작업에만 `pages: write`, `id-token: write` 권한을 사용합니다.
+- 기본 `github.io` 주소를 사용하므로 도메인 등록용 실명·집주소를 제출하지 않습니다. 공개 GitHub 프로필과 공개 저장소 정보는 계속 공개됩니다.
+- 기본 주소는 `/juwon-portfolio/` 경로를 사용합니다. HTML의 자산 URL과 모듈 import를 상대경로로 유지하세요.
+- GitHub Pages는 개인 포트폴리오용입니다. 사이트 크기 1GB, 월 대역폭 100GB 소프트 한도가 있으며, 상거래·유료 SaaS 호스팅 용도로는 사용하지 마세요. [공식 한도](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+- `jupt.int.yt` 등록은 실제 집주소를 공개 WHOIS에 요구해 중단했습니다. 해당 주소는 확보하지 않았으며 CNAME을 설정하지 않았습니다. 다른 짧은 무료 주소는 최신 개인정보 조건과 DNS 제어권을 확인한 뒤 별도 승인받아 연결하세요.
+
+GitHub Pages 배포 실패 시 위 Pages workflow 링크에서 실패한 작업의 로그를 확인하세요. 기존 Cloudflare 주소는 삭제하지 않았으므로 독립적으로 확인할 수 있습니다.
 
 ## 무료 범위와 한도
 
