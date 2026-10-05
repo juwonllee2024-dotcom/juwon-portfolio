@@ -9,3 +9,4 @@ out/
 .openai/
 capture-review/
 capture-state/
+.worktrees/
