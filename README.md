@@ -29,7 +29,11 @@ Local preview chooses a free loopback port, without interrupting other projects.
 
 The owner selected presentation, not public execution. `#works` presents 26 visual-work records, including prototypes, an explicitly incomplete iPhone demo, and credited integrations. Categories are 3D/games/visualizations, web apps, and desktop/extensions. Existing project IDs and the full collection remain intact.
 
-Three reviewed historical captures illustrate Seoul Zero (city and play views) and KRAUDE LAND. Their filenames match their actual JPEG/PNG formats. No local addresses, private chats, credentials or filesystem paths are published. Other records explicitly say their screenshots are pending; concept images are never relabeled as actual screenshots. Related GitHub links are labeled source links, not working demos.
+24 of the 26 exhibition records now have 25 reviewed actual screenshots: 22 new browser captures, plus the three preserved historical captures of Seoul Zero and KRAUDE LAND. Captures distinguish actual app screens, disconnected UI previews, and historical execution records. Capturing a screen does not verify its entire workflow. The JUWON SYSTEM photo shows its Mission Web variant, not Electron. Isolated BlogFoundry and ClipProof previews contained no customer records and performed no production or publication actions. AI-generated imagery is not included.
+
+Local AI Chat remains uncaptured because its current source location was unavailable. OpenHands' installed build rendered blank without its desktop runtime, so that image was excluded. Their details explain these limitations. Second Brain's displayed tool/status counts are saved classification data, not verified uptime or completion. Related GitHub links remain source links, not working demos.
+
+Private capture review files and isolated preview state are ignored and never built or staged. Only privacy-reviewed images explicitly listed in the public-build test are published. Original app sources, existing services, hosting settings and dependencies remain unchanged.
 
 Edit exhibit metadata in `public/catalog.mjs`, rendering in `public/showcase.mjs`, and styles in `public/style.css`. Adding screenshots requires privacy review, relative asset URLs, matching file signatures/MIME types and an updated public-build allowlist test. These are static assets; no model, local server or runtime video processing is deployed.
 

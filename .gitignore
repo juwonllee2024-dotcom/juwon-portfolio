@@ -7,3 +7,5 @@ out/
 .dev.vars*
 *.log
 .openai/
+capture-review/
+capture-state/

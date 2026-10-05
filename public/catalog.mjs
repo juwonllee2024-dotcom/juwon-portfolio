@@ -172,6 +172,35 @@ const exhibitNotes = {
   timeless:['app','implemented','AI 응답 화면 캡처와 반복 작업을 처리하는 Chrome 확장.','TimeLess Auto v2.0.0 설치 ZIP과 확장 코드가 있습니다. Timeless 영상 시리즈와는 별도 도구입니다.'],
   openhands:['app','integration','BrowseCode와 외부 OpenHands·로컬 모델을 연결한 에이전트 UI.','브리지·모델 선택·확장 연결 코드가 있습니다. OpenHands 자체를 독자 제작한 것으로 소개하지 않습니다.']
 };
+// Privacy-reviewed browser screenshots. A UI preview is not proof of backend execution.
+const capturedScreens = {
+  portfolio:['running-ui','공개 포트폴리오 첫 화면 · 이미지 추가 전 배포 기록'],
+  longform:['running-ui','로컬 장편 편집실 시작 화면 · 다운로드·번역·렌더 작업은 실행하지 않음'],
+  diamond:['running-ui','브라우저의 실제 3D 야구 시작 화면 · 경기 전체 기능은 미검증'],
+  skybound:['running-ui','브라우저의 실제 3D 비행 게임 시작 화면 · 카메라·동작 조종 미검증'],
+  'factory-proof':['running-ui','기존 일정 검증 시각화 HTML · 표시 값은 검증 시나리오이며 실제 공장 실적이 아님'],
+  secondbrain3d:['running-ui','기존 3D 은하 UI · 도구 수와 상태는 저장된 분류 데이터이며 현재 운영 현황을 자동 검증한 값이 아님 · 일부 HUD 배치 미완성'],
+  iphone:['ui-preview','기존 초기 웹페이지 빌드 · 3D 상호작용 미완성'],
+  'company-lab':['ui-preview','기존 Company AI Lab 빌드 · 운영 서버 미연결'],
+  village:['ui-preview','기존 픽셀 회사 UI · 에이전트 서버 미연결 · 시뮬레이션 미실행'],
+  symphony:['ui-preview','기존 Company OS 회사 선택 UI · 서버 미연결 오류가 표시된 상태'],
+  timeless:['ui-preview','기존 확장 패널 단독 미리보기 · 브라우저 확장 설치·반복 작업 미실행'],
+  'lee-relay':['ui-preview','기존 확장 패널 단독 미리보기 · AI 탭 연결·회의 미실행'],
+  'lee-ultra':['ui-preview','기존 확장 패널 단독 미리보기 · 실행 잠금·자동 코딩 비활성 상태'],
+  blogfoundry:['running-ui','별도 빈 로컬 작업공간 · 초안 생성·외부 발행 미실행 · 고객 데이터 없음'],
+  clipproof:['running-ui','별도 빈 로컬 작업공간 · 제작 패키지 생성·외부 업로드 미실행'],
+  atlas:['ui-preview','기존 지도 UI · 프로젝트 데이터 미연결 오류 상태 · 빈 목록을 완성 데이터로 표시하지 않음'],
+  'localhost-commander':['ui-preview','기존 관제 대시보드 UI · 관리 서버 미연결 · 서비스 시작·종료 버튼 미사용'],
+  nebula:['ui-preview','기존 랜딩 페이지 UI · 관제 서버 미연결 · 템플릿 지표는 실제 실적이 아님'],
+  'yt-korean':['ui-preview','기존 자막 스튜디오 UI · 번역 모델·백엔드 미연결 · 영상 작업 미실행'],
+  'juwon-system':['ui-preview','JUWON SYSTEM 계열의 Mission Web 빌드 · Electron 화면이 아님 · 미션 서버 미연결'],
+  'revenue-os':['ui-preview','기존 빌드의 빈 주문 UI · 고객 데이터·백엔드 미연결 · 제작·납품 미실행'],
+  antistudy:['ui-preview','저장된 Mission Engine 랜딩 HTML과 일치하는 빌드 CSS · AI·인증 서버 미연결 · 미션 생성 미실행'],
+};
+const captureIssues = {
+  'local-chat':'현재 접근 가능한 소스 위치를 찾지 못해 캡처하지 않았습니다.',
+  openhands:'설치된 화면 빌드는 데스크톱 런타임 연결 없이 빈 화면으로 표시돼 공개 캡처에서 제외했습니다.',
+};
 const urls = {
   'ai-for-all':'https://www.youtube.com/@JuwonLee-k7x',
   jupt:'https://www.youtube.com/@%EC%A3%BC%ED%94%BC%ED%8B%B0-JuPT',
@@ -190,7 +219,9 @@ export const exhibitGroups = {all:'전체 작품',world:'3D · 게임 · 시각�
 export const exhibitStates = {implemented:'구현 자료 확인',prototype:'프로토타입',published:'공개 배포',partial:'초기 구현 · 미완성',integration:'외부 도구 연동'};
 export const projects = Object.entries(categories).flatMap(([category,rows])=>rows.map(([id,name,description,tagline,status,evidence])=>{
   const note = exhibitNotes[id];
-  return {id,name,description:note?note[2]:description,category,tags:tagline.split(' · '),status:note?exhibitStates[note[1]]:status,evidence:note?note[3]:(evidence||audit),...(urls[id]?{url:urls[id]}:{}),...(note?{exhibit:{group:note[0],state:note[1],note:note[2],shots:note[4]||[]}}:{})};
+  const capture = capturedScreens[id];
+  const shots = note ? [...(note[4]||[]),...(capture?[{src:`./${id}-screen.jpg`,alt:`${name}의 실제 화면 캡처`,caption:capture[1],kind:capture[0]}]:[])] : [];
+  return {id,name,description:note?note[2]:description,category,tags:tagline.split(' · '),status:note?exhibitStates[note[1]]:status,evidence:note?note[3]:(evidence||audit),...(urls[id]?{url:urls[id]}:{}),...(note?{exhibit:{group:note[0],state:note[1],note:note[2],shots,...(captureIssues[id]?{captureIssue:captureIssues[id]}:{})}}:{})};
 }));
 export const categoryLabels = {all:'전체',product:'제품 · 오픈소스',ai:'AI · 세계관',content:'영상 · 콘텐츠',workflow:'워크플로우',lab:'실험 · 야심작'};
 export function filterProjects(rows,query='',category='all'){
