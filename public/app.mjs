@@ -1,7 +1,20 @@
-import {projects,categoryLabels,filterProjects} from './catalog.mjs';
+import {projects,categoryLabels,filterProjects,exhibitGroups} from './catalog.mjs';
+import {renderExhibitCard,renderExhibitMedia} from './showcase.mjs';
 const $ = s=>document.querySelector(s);
 const esc = v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let category='all';
+let exhibitGroup='all';
+const exhibitProjects=projects.filter(p=>p.exhibit).sort((a,b)=>Number(b.exhibit.shots.length>0)-Number(a.exhibit.shots.length>0));
+$('#work-count').textContent=String(exhibitProjects.length);
+$('#work-filters').innerHTML=Object.entries(exhibitGroups).map(([key,label])=>`<button class="filter ${key==='all'?'active':''}" data-exhibit-group="${key}" aria-pressed="${key==='all'}">${esc(label)}</button>`).join('');
+function renderExhibition(){
+  const rows=filterProjects(exhibitProjects,$('#work-search').value).filter(p=>exhibitGroup==='all'||p.exhibit.group===exhibitGroup);
+  $('#works-grid').innerHTML=rows.map(renderExhibitCard).join('');
+  $('#work-results').textContent=`${rows.length}개 전시 / 전체 ${exhibitProjects.length}개 · 미완성·연동 작품 포함`;
+  $('#work-empty').hidden=rows.length!==0;
+}
+$('#work-filters').addEventListener('click',e=>{const button=e.target.closest('[data-exhibit-group]');if(!button)return;exhibitGroup=button.dataset.exhibitGroup;for(const b of $('#work-filters').children){const active=b===button;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}renderExhibition();});
+$('#work-search').addEventListener('input',renderExhibition);
 const statusClass=p=>/구상|목표|보류|주제/.test(p.status)?'idea':'';
 const card=p=>`<button class="project-card" data-project="${esc(p.id)}" aria-label="${esc(p.name)} 상세 보기"><div class="card-top"><span class="card-category">${esc(categoryLabels[p.category])}</span><span class="card-arrow">↗</span></div><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="card-bottom"><span>${esc(p.tags[0])}</span><span class="status ${statusClass(p)}">${esc(p.status)}</span></div></button>`;
 const artworks = {
@@ -21,10 +34,11 @@ $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-categ
 $('#search').addEventListener('input',render);
 $('#view').addEventListener('change',e=>$('#catalog').classList.toggle('list',e.target.value==='list'));
 $('#reset').addEventListener('click',()=>{$('#search').value='';$('#filters').querySelector('[data-category="all"]').click();$('#search').focus();});
-function openDetail(id){const p=projects.find(p=>p.id===id);if(!p)return;$('#detail-category').textContent=categoryLabels[p.category];$('#detail-title').textContent=p.name;$('#detail-description').textContent=p.description;$('#detail-tags').innerHTML=p.tags.map(t=>`<span>${esc(t)}</span>`).join('');$('#detail-status').textContent=p.status;$('#detail-evidence').textContent=p.evidence;$('#detail-link').innerHTML=p.url?`<a class="primary" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${p.status==='외부 도구 활용'?'외부 원작 보기':'관련 링크 열기'} <span>↗</span></a>`:'<p class="detail-unavailable">확인된 공개 데모 링크는 아직 없습니다. 로컬 실행 주소나 개인 작업 경로는 공개하지 않습니다.</p>';$('#detail').showModal();document.body.classList.add('no-scroll');}
+function openDetail(id){const p=projects.find(p=>p.id===id);if(!p)return;$('#detail-category').textContent=p.exhibit?exhibitGroups[p.exhibit.group]:categoryLabels[p.category];$('#detail-title').textContent=p.name;$('#detail-description').textContent=p.description;$('#detail-media').innerHTML=renderExhibitMedia(p);$('#detail-tags').innerHTML=p.tags.map(t=>`<span>${esc(t)}</span>`).join('');$('#detail-status').textContent=p.status;$('#detail-evidence').textContent=p.evidence;$('#detail-link').innerHTML=p.url?`<a class="primary" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${p.status==='외부 도구 활용'?'외부 원작 보기':p.url.startsWith('https://github.com/')?'공개 소스 보기':'관련 링크 열기'} <span>↗</span></a>`:'<p class="detail-unavailable">확인된 공개 데모 링크는 아직 없습니다. 로컬 실행 주소나 개인 작업 경로는 공개하지 않습니다.</p>';$('#detail').showModal();document.body.classList.add('no-scroll');}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-project]');if(b)openDetail(b.dataset.project);});
 $('#close-detail').addEventListener('click',()=>$('#detail').close());
 $('#detail').addEventListener('close',()=>{document.body.classList.remove('no-scroll');if(location.hash.startsWith('#project-'))history.replaceState(null,'','#projects');});
 $('#detail').addEventListener('click',e=>{if(e.target!==$('#detail'))return;const r=$('#detail').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)$('#detail').close();});
 document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!$('#detail').open){e.preventDefault();$('#search').focus();}});
 render();
+renderExhibition();

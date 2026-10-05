@@ -12,7 +12,7 @@ Existing live mirror: [juwon-portfolio.juwonllee2026.workers.dev](https://juwon-
 
 Source: [juwonllee2024-dotcom/juwon-portfolio](https://github.com/juwonllee2024-dotcom/juwon-portfolio)
 
-Published to the owner's Cloudflare account on 2026-10-03 (America/Los_Angeles). Only the five public assets are built into `out/`; repository metadata and private hosting configuration are not published. The owner's GitHub repository is connected to Cloudflare Pages and Workers Builds on production branch `main`.
+Published to the owner's Cloudflare account on 2026-10-03 (America/Los_Angeles). Only allowlisted public assets are built into `out/`; repository metadata and private hosting configuration are not published. The owner's GitHub repository is connected to Cloudflare Pages and Workers Builds on production branch `main`.
 
 ## Run and verify
 
@@ -23,7 +23,15 @@ npm run dev
 npm run check:deploy
 ```
 
-Local preview chooses a free loopback port, without interrupting other projects. All public descriptions are in `public/catalog.mjs`. The 119 records include project families, workflow components, experiments and ambitions, not 119 finished products. External open-source integrations and family collaboration are credited separately. Audit-based status is not an uptime or completion guarantee.
+Local preview chooses a free loopback port, without interrupting other projects. All public descriptions are in `public/catalog.mjs`. The 123 records include project families, workflow components, experiments and ambitions, not 123 finished products. External open-source integrations and family collaboration are credited separately. Audit-based status is not an uptime or completion guarantee.
+
+## Visual exhibition
+
+The owner selected presentation, not public execution. `#works` presents 26 visual-work records, including prototypes, an explicitly incomplete iPhone demo, and credited integrations. Categories are 3D/games/visualizations, web apps, and desktop/extensions. Existing project IDs and the full collection remain intact.
+
+Three reviewed historical captures illustrate Seoul Zero (city and play views) and KRAUDE LAND. Their filenames match their actual JPEG/PNG formats. No local addresses, private chats, credentials or filesystem paths are published. Other records explicitly say their screenshots are pending; concept images are never relabeled as actual screenshots. Related GitHub links are labeled source links, not working demos.
+
+Edit exhibit metadata in `public/catalog.mjs`, rendering in `public/showcase.mjs`, and styles in `public/style.css`. Adding screenshots requires privacy review, relative asset URLs, matching file signatures/MIME types and an updated public-build allowlist test. These are static assets; no model, local server or runtime video processing is deployed.
 
 ## Manual deployment of the existing Workers mirror
 

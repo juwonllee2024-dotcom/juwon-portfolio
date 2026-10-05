@@ -76,7 +76,7 @@ const categories = {
   ai: [
     ['kraude','KRAUDE','AI 에이전트·작업 화면·모델 실험실을 하나의 환경으로 연결하는 작업 시스템.','Agents · World','실행 기록'],
     ['village','AI Agent Village','여러 AI 에이전트가 함께 움직이고 협업하는 공간 실험.','Multi-agent','자료 확인'],
-    ['diamond','Diamond Rivalry','AI 협업과 경쟁 구조를 탐색하는 프로젝트. 상세 범위 정리 중.','Agents · Experiment','자료 확인'],
+    ['diamond','Diamond Rivalry','브라우저에서 플레이하는 3D 야구 게임. 기존 도시 주행 실험과 같은 작업 폴더에서 이어진 현재 작품.','3D · Baseball','구현 자료'],
     ['lee-relay','LEE RELAY','여러 AI 채팅 사이에서 메시지·역할·작업 결과를 이어주는 협업 확장.','Chrome · Multi-agent','구현 자료',readme],
     ['lee-ultra','Lee Relay Ultra','Lee Relay의 확장된 협업 흐름을 탐색하는 별도 작업 계열.','Relay · Experiment','자료 확인'],
     ['law-ai','AI Law Firm','자료와 근거를 정리하는 법률 AI 협업 구상. 법률 자문 서비스가 아님.','Research · Agents','실험 기록'],
@@ -132,15 +132,66 @@ const categories = {
     ['daily-project','하루 하나 작은 프로젝트','작게 만들고 결과물을 공유하는 제작 챌린지.','Challenge · Build','구상']
   ]
 };
+// Public-facing exhibition notes from the reviewed Codex audit; no private paths or transcripts.
+categories.product.push(
+  ['portfolio','JuPT Portfolio','3D 작품·웹앱·확장 프로그램을 한곳에 전시하는 독립 공개 포트폴리오.','Web · Portfolio','공개 배포'],
+  ['company-lab','Company AI Lab','회사 AI 채팅과 도구 실행·운영 실험을 다루는 로컬 관제 화면.','Web · Agents','구현 자료'],
+  ['localhost-commander','Localhost Commander','로컬 서비스의 발견·목록·상태를 관리하는 개인 대시보드.','Web · Local services','구현 자료']
+);
+categories.ai.push(
+  ['factory-proof','Factory Proof','공장 작업 일정과 비교 결과를 인터랙티브하게 보여주는 계산·검증 시각화.','Visualization · Scheduling','구현 자료']
+);
+const exhibitNotes = {
+  seoul:['world','implemented','3D 도시·회사, 계약·성장·연쇄 사건·추천 행동 화면이 구현된 경영 게임.','게임 코드·README·실제 실행 캡처와 테스트 기록을 확인했습니다. 공개 게임 서버의 가동 여부는 미검증입니다.',[
+    {src:'./seoul-zero-city.jpg',alt:'Seoul Zero의 서울 3D 도시와 지역 선택 화면',caption:'기록된 실제 실행 화면 · 3D 서울'},
+    {src:'./seoul-zero-play.jpg',alt:'Seoul Zero의 추천 행동과 계약 선택 화면',caption:'기록된 실제 실행 화면 · 쉽게 플레이'}]],
+  kraude:['world','prototype','3D 시설·미션 관제·에이전트 상태와 모델 실험을 연결한 로컬 세계.','3D 화면과 핵심 코드·학습 결과 파일을 확인했습니다. 캡처는 과거 실행 기록이며, 모델의 성능 향상·승격은 미완료입니다.',[
+    {src:'./kraude-land.png',alt:'KRAUDE LAND의 연구실·공장·숙소가 보이는 3D 시설 화면',caption:'기록된 실제 실행 화면 · 캡처 당시 시설 관람 상태'}]],
+  village:['world','prototype','AI 직원과 협업 상태를 보여주는 3D·픽셀 회사 세계.','월드 엔진·서버·모델 연결 코드가 있습니다. 최신 Codex 채팅 연결 기능은 설계·계획 단계입니다.'],
+  diamond:['world','implemented','현재 작업 폴더의 README와 게임 소스로 확인한 3D 야구 작품.','게임 소스·README와 테스트 기록을 확인했습니다. 과거 도시 주행 프로토타입은 별도 현행 작품으로 중복 계산하지 않습니다.'],
+  skybound:['world','implemented','몸 움직임을 입력으로 사용하는 브라우저 3D 비행 게임.','공개 저장소의 Three.js·MediaPipe 기반 구현 자료를 확인했습니다. 외부 라이브러리 활용 작품입니다.'],
+  secondbrain3d:['world','prototype','프로젝트 관계를 뉴런처럼 연결하는 개인 지식 시각화.','기존 화면 소스가 있습니다. 최신 WebGL Universe 재설계는 문서·계획 단계이며 이 전시에서 완성으로 표시하지 않습니다.'],
+  atlas:['world','implemented','프로젝트 분류·검색·상세 정보와 연결 그래프를 탐색하는 지도.','README·서버·화면 소스를 확인했습니다. 과거 데이터 오류 기록이 있어 정상 운영 여부는 재검증이 필요합니다.'],
+  'factory-proof':['world','implemented','작업 일정의 후보와 검증 결과를 눈으로 비교하는 인터랙티브 작품.','계산 코드·README·시각화 HTML과 검증 기록이 있습니다. 실제 공장 운영 성과를 주장하지 않습니다.'],
+  iphone:['world','partial','시네마틱 3D 기기 웹 데모를 만드는 초기 작업.','설계·구현 계획·초기 코드 작업 기록까지만 확인했습니다. 모델 준비와 완성 사이트는 미확인인 미완성 작품입니다.'],
+  portfolio:['web','published','독립 정적 웹사이트. 기존 작품·아이디어 기록을 보존하며 실제 화면 작품을 별도로 전시합니다.','소스는 본인 GitHub에 있습니다. Cloudflare Pages·Workers와 GitHub Pages의 기존 배포를 사용하는 정적 포트폴리오입니다.'],
+  antistudy:['web','implemented','목표·미션·시도·판정, 온보딩과 AI 연결을 갖춘 실행 관리 웹앱.','화면·미션 흐름 코드와 테스트·빌드 기록을 확인했습니다. 현재 서비스의 가동이나 사업 성과는 별도입니다.'],
+  symphony:['web','implemented','Company OS 계열의 회사·AI 채팅·작업 승인·증거 기록 화면.','실제 서버·회사 실행 엔진·Symphony 채팅 코드가 있습니다. 최신 Chat Awakening 연결은 계획 단계입니다.'],
+  'company-lab':['web','prototype','회사 AI와 도구 실행을 시험하고 운영 기록을 확인하는 화면.','회사 AI Lab 코드·운영 문서·검증 자료가 있습니다. 후속 Synapse 연결의 전체 완성은 확정하지 않았습니다.'],
+  'localhost-commander':['web','implemented','로컬 프로젝트·서비스를 발견하고 목록·상태를 살펴보는 대시보드.','서버·발견·레지스트리·대시보드 코드가 있습니다. 모든 서비스를 항상 실행시키는 공개 서버는 아닙니다.'],
+  nebula:['web','prototype','Nebula Studio의 별도 웹 화면과 로컬 관제 실험.','화면 파일이 확인됐습니다. Localhost Control Center·Second Brain 계열과 연결되며 독립 제품 완성은 미확인입니다.'],
+  'yt-korean':['web','prototype','영상 입력·유튜브 다운로드·한국어 자막·최종 출력·QA를 다루는 웹앱.','소스와 실제 최종 MP4·자막 QA 결과 파일을 확인했습니다. 모든 유튜브 링크와 번역이 안정적으로 작동한다고 보장하지 않습니다.'],
+  longform:['web','prototype','영어 장편을 5~8분으로 줄이는 편집실. 대기열·모델 선택·개인 허가 메모를 포함합니다.','장편 압축·유튜브 입력·웹 UI·Ollama 연결 코드가 있습니다. 다운로드·번역 실패 기록이 있어 안정화가 필요한 프로토타입입니다.'],
+  'revenue-os':['web','prototype','매장 주문을 웹사이트·쇼츠 기획·검수·납품 ZIP으로 연결하는 운영 웹앱.','로컬 MVP README와 구현 자료가 있습니다. 실제 고객·결제·매출이 발생했다는 증거는 확인되지 않았습니다.'],
+  blogfoundry:['web','prototype','근거 메모로 블로그 초안을 만들고 검수·WordPress 게시 준비를 하는 웹앱.','Python·SQLite UI/API와 검수·게시 준비 기능이 있습니다. 브라우저가 자동 공개 발행하는 도구는 아닙니다.'],
+  clipproof:['web','prototype','영상 허가·출처·고유 해설을 기록하고 자막·편집 지시서 패키지를 만드는 웹앱.','로컬 UI/API와 패키지 생성 코드가 있습니다. 영상 다운로드·MP4 렌더·자동 업로드 기능은 포함하지 않습니다.'],
+  'local-chat':['web','prototype','로컬 모델과 대화하고 에이전트·터미널 연결을 실험하는 UI.','로컬 채팅·시작 파일과 Agent UI 작업 기록이 있습니다. 후속 통합 작업 전체의 완성은 미확인입니다.'],
+  'juwon-system':['app','prototype','개인 성장·퀘스트 관리 Electron 앱과 별도 Mission Web.','실행 파일과 웹 소스가 존재합니다. 설치 파일 존재를 전체 기능 완성이나 정상 실행 보증으로 해석하지 않습니다.'],
+  'lee-relay':['app','implemented','여러 AI 채팅의 메시지·역할·작업 결과를 이어주는 Chrome 확장.','v4.1.11 설치 ZIP·manifest와 테스트 기록을 확인했습니다. 브라우저에 현재 설치된 버전은 별도 확인 대상입니다.'],
+  'lee-ultra':['app','implemented','계획·구현·검토·테스트 역할과 로컬 코딩 실행을 연결하는 별도 확장.','v1.1.0 계열 README·확장·로컬 실행 서버와 공개 저장소가 있습니다. LEE RELAY와는 별도 제품입니다.'],
+  timeless:['app','implemented','AI 응답 화면 캡처와 반복 작업을 처리하는 Chrome 확장.','TimeLess Auto v2.0.0 설치 ZIP과 확장 코드가 있습니다. Timeless 영상 시리즈와는 별도 도구입니다.'],
+  openhands:['app','integration','BrowseCode와 외부 OpenHands·로컬 모델을 연결한 에이전트 UI.','브리지·모델 선택·확장 연결 코드가 있습니다. OpenHands 자체를 독자 제작한 것으로 소개하지 않습니다.']
+};
 const urls = {
   'ai-for-all':'https://www.youtube.com/@JuwonLee-k7x',
   jupt:'https://www.youtube.com/@%EC%A3%BC%ED%94%BC%ED%8B%B0-JuPT',
   filebirthmark:'https://github.com/juwonllee2024-dotcom/filebirthmark',
   command:'https://github.com/juwonllee2024-dotcom/juwon-company-os-v2',
   'tomorrow-tax':'https://github.com/juwonllee2024-dotcom/tomorrow-tax',
-  rulesync:'https://github.com/rulesync/rulesync'
+  rulesync:'https://github.com/rulesync/rulesync',
+  symphony:'https://github.com/juwonllee2024-dotcom/juwon-company-os-v2',
+  portfolio:'https://github.com/juwonllee2024-dotcom/juwon-portfolio',
+  skybound:'https://github.com/juwonllee2024-dotcom/zephyr',
+  openapps:'https://github.com/juwonllee2024-dotcom/openapps',
+  'lee-relay':'https://github.com/juwonllee2024-dotcom/lee-relay',
+  'lee-ultra':'https://github.com/juwonllee2024-dotcom/lee-relay-ultra'
 };
-export const projects = Object.entries(categories).flatMap(([category,rows])=>rows.map(([id,name,description,tagline,status,evidence])=>({id,name,description,category,tags:tagline.split(' · '),status,evidence:evidence||audit,...(urls[id]?{url:urls[id]}:{})})));
+export const exhibitGroups = {all:'전체 작품',world:'3D · 게임 · 시각화',web:'웹사이트 · 웹앱',app:'데스크톱 · 확장 앱'};
+export const exhibitStates = {implemented:'구현 자료 확인',prototype:'프로토타입',published:'공개 배포',partial:'초기 구현 · 미완성',integration:'외부 도구 연동'};
+export const projects = Object.entries(categories).flatMap(([category,rows])=>rows.map(([id,name,description,tagline,status,evidence])=>{
+  const note = exhibitNotes[id];
+  return {id,name,description:note?note[2]:description,category,tags:tagline.split(' · '),status:note?exhibitStates[note[1]]:status,evidence:note?note[3]:(evidence||audit),...(urls[id]?{url:urls[id]}:{}),...(note?{exhibit:{group:note[0],state:note[1],note:note[2],shots:note[4]||[]}}:{})};
+}));
 export const categoryLabels = {all:'전체',product:'제품 · 오픈소스',ai:'AI · 세계관',content:'영상 · 콘텐츠',workflow:'워크플로우',lab:'실험 · 야심작'};
 export function filterProjects(rows,query='',category='all'){
   const q=query.trim().toLocaleLowerCase();
