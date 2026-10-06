@@ -11,6 +11,9 @@ test('preview serves only public assets and cannot expose its source or hosting 
     assert.equal(home.status,200);
     assert.match(await home.text(),/JUWON/);
     assert.equal((await fetch(base+'/catalog.mjs')).status,200);
+    const license=await fetch(base+'/motion-licenses.txt');
+    assert.equal(license.status,200);
+    assert.equal(license.headers.get('content-type'),'text/plain; charset=utf-8');
     const capture=await fetch(base+'/seoul-zero-city.jpg');
     assert.equal(capture.status,200,'reviewed screenshots must be served');
     assert.equal(capture.headers.get('content-type'),'image/jpeg');
