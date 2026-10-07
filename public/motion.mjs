@@ -66,7 +66,7 @@ export async function startMotion({root,projects,environment=defaultEnvironment(
       const segmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('ko',{granularity:'grapheme'}):null;
       if(source.hasAttribute('data-type')&&segmenter){
         clone.textContent='';units=splitGraphemes(source.textContent,segmenter).map(text=>{const span=doc.createElement('span');span.textContent=text;span.style.display='inline-block';span.style.whiteSpace='pre';clone.append(span);return span;});
-      }else if(!source.hasAttribute('data-type')&&deps.SplitText){const split=new deps.SplitText(clone,{type:'words',aria:'none'});splits.push(split);units=split.words;}
+      }else if(!source.hasAttribute('data-type')&&segmenter&&deps.SplitText){const split=new deps.SplitText(clone,{type:'words',aria:'none'});splits.push(split);units=split.words;}
       const initial=source.closest('[data-story-chapter="spark"]');
       animations.push(deps.gsap.fromTo(units,{opacity:0,y:source.hasAttribute('data-type')?4:46,rotateX:source.hasAttribute('data-type')?0:15},{opacity:1,y:0,rotateX:0,duration:initial?1.1:1,stagger:source.hasAttribute('data-type')?.035:.075,ease:'power3.out',delay:initial?.18:0,...(!initial?{scrollTrigger:{trigger:source.closest('article')||source.closest('[data-story-chapter]'),start:'top 75%',end:'top 15%',scrub:.5}}:{})}));
     }

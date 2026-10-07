@@ -111,7 +111,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       }
       if(composer)composer.render();else renderer.render(scene,camera);
     },
-    resize(width,height,dpr){if(disposed)return;camera.aspect=Math.max(1,width)/Math.max(1,height);camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(dpr||1,qualityLimits(currentQuality).dpr));renderer.setSize(width,height,false);composer?.setSize(width,height);},
+    resize(width,height,dpr){if(disposed)return;camera.aspect=Math.max(1,width)/Math.max(1,height);camera.fov=camera.aspect<1?Math.min(105,Math.max(58,2*Math.atan(3.2/(8*camera.aspect))*180/Math.PI)):44;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(dpr||1,qualityLimits(currentQuality).dpr));renderer.setSize(width,height,false);composer?.setSize(width,height);},
     setQuality(next){if(disposed||next===currentQuality)return;currentQuality=next;if(next==='off'){dispose();return;}configure();},
     dispose
   };

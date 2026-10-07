@@ -25,7 +25,19 @@ npm run check:deploy
 
 Local preview chooses a free loopback port, without interrupting other projects. All public descriptions are in `public/catalog.mjs`. The 123 records include project families, workflow components, experiments and ambitions, not 123 finished products. External open-source integrations and family collaboration are credited separately. Audit-based status is not an uptime or completion guarantee.
 
-## Visual exhibition
+## Cinematic universe
+
+The portfolio now has a progressive-enhancement Three.js journey: spark, constellation, work, convergence and a final KRAUDE / Second Brain 3D / AntiStudy reveal. Existing search, 123 records, 26 exhibitions and reviewed capture labels remain intact. Decorative connections are not claims that the project backends are integrated or currently operating.
+
+Edit chapter copy and camera keys in `public/story.mjs`, the scene in `public/universe.mjs`, scroll/type coordination in `public/motion.mjs`, and presentation in `public/index.html` / `public/style.css`. Capture descriptions stay in `public/catalog.mjs`; changes to static finale copy must agree with that source.
+
+Motion can be disabled with the header button. Reduced-motion preferences, missing WebGL, missing modules, failed 3D textures and context loss keep the readable HTML version available. Small portrait screens use lower GPU budgets and a wider camera framing. Short-height views do not pin content into an overflowing panel. No autoplay audio is used.
+
+Browser libraries are pinned, self-hosted flat ES modules; the live site does not require a runtime JavaScript CDN, model, API, database or localhost server. `public/motion-licenses.txt` preserves original notices. GSAP uses its standard no-charge license, not MIT. Version / provenance / SHA256 and isolated rebuild commands are in `docs/motion-vendors.json`; `scripts/vendor-motion.mjs` regenerates the artifacts. Rebuilding vendors is a separate local preparation step, not a CI dependency. Keep the existing standard-library build and hosting settings.
+
+Run `node scripts/check-cinematic.mjs` for conservative whole-module gzip size and root / GitHub-prefix import checks. Private failure fixtures in `tests/browser-fixtures.mjs` are loopback-only and never published. See `docs/cinematic-verification.md` for checks and limitations.
+
+## Reviewed visual exhibition
 
 The owner selected presentation, not public execution. `#works` presents 26 visual-work records, including prototypes, an explicitly incomplete iPhone demo, and credited integrations. Categories are 3D/games/visualizations, web apps, and desktop/extensions. Existing project IDs and the full collection remain intact.
 

@@ -37,7 +37,7 @@ function backend() {
   class Renderer {
     setPixelRatio(value){state.pixelRatio=value;}
     setSize(){}
-    render(scene,camera){state.renders++;state.scene=scene;assert.ok(camera.isPerspectiveCamera);}
+    render(scene,camera){state.renders++;state.scene=scene;state.camera=camera;scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);assert.ok(camera.isPerspectiveCamera);}
     dispose(){state.disposes++;}
     setClearColor(){}
   }
@@ -76,4 +76,19 @@ test('lost context or failed texture falls back once without leaking renderer',a
     engine.dispose();
     assert.equal(failures,1);assert.equal(b.state.disposes,1);
   }
+});
+test('portrait viewport keeps the focused screenshot inside its horizontal frustum',async()=>{
+  const b=backend(),canvas=new EventTarget();
+  const engine=await universe.init({canvas,projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null},onFailure:e=>assert.fail(String(e))});
+  engine.resize(360,780,1);engine.update(sampleStory(.4),0);
+  b.state.loads.forEach(r=>r.success(new THREE.Texture({width:1280,height:720})));
+  engine.update(sampleStory(.4),1);
+  let mesh;b.state.scene.traverse(node=>{if(node.userData.projectId==='iphone')mesh=node;});
+  assert.ok(mesh);
+  const vertices=mesh.geometry.getAttribute('position');
+  for(let i=0;i<vertices.count;i++){
+    const projected=new THREE.Vector3().fromBufferAttribute(vertices,i).applyMatrix4(mesh.matrixWorld).project(b.state.camera);
+    assert.ok(Math.abs(projected.x)<=1,'focused screenshot must not be cropped horizontally');
+  }
+  engine.dispose();
 });
