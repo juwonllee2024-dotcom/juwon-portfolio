@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const module=await import('../public/motion.mjs').catch(e=>{if(e.code==='ERR_MODULE_NOT_FOUND')return {};throw e;});
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
-function fixture({reduced=false,denyStorage=false,rejectLoad=false,pending=false}={}) {
+function fixture({reduced=false,denyStorage=false,rejectLoad=false,pending=false,fine=false}={}) {
   const classes=new Set(),ticker=new Set(),calls={load:0,created:0,disposed:0,frames:[]};
-  const window=new EventTarget();Object.assign(window,{innerWidth:1440,innerHeight:900,devicePixelRatio:2,scrollY:0,performance:{now:()=>0},matchMedia:q=>Object.assign(new EventTarget(),{matches:q.includes('reduced-motion')&&reduced})});
+  const window=new EventTarget();Object.assign(window,{innerWidth:1440,innerHeight:900,devicePixelRatio:2,scrollY:0,performance:{now:()=>0},matchMedia:q=>Object.assign(new EventTarget(),{matches:(q.includes('reduced-motion')&&reduced)||(q.includes('pointer: fine')&&fine)})});
   const document=new EventTarget();Object.assign(document,{hidden:false,body:{classList:{add:(...a)=>a.forEach(v=>classes.add(v)),remove:(...a)=>a.forEach(v=>classes.delete(v)),contains:v=>classes.has(v)}}});
   const button=new EventTarget();button.setAttribute=()=>{};
   const canvas=new EventTarget(),dialog=Object.assign(new EventTarget(),{open:false});
@@ -14,6 +14,12 @@ function fixture({reduced=false,denyStorage=false,rejectLoad=false,pending=false
   document.querySelector=s=>nodes[s]||null;document.querySelectorAll=s=>s==='[data-story-chapter]'?chapters:[];
   const gsap={registerPlugin(){},ticker:{add:cb=>ticker.add(cb),remove:cb=>ticker.delete(cb)},fromTo:()=>({kill(){}}),set(){}};
   const deps={gsap,ScrollTrigger:{create:()=>({kill(){}}),refresh(){},update(){}},SplitText:null,THREE:{},postprocessing:null,Lenis:null};
+  if(fine)deps.Lenis=class {
+    constructor(){this.stopped=false;calls.lenis=this;this.frames=0;}
+    on(){} start(){this.stopped=false;} stop(){this.stopped=true;}
+    raf(){this.frames++;} destroy(){this.destroyed=true;}
+    wheel(delta){if(this.stopped)return false;window.scrollY+=delta;window.dispatchEvent(new Event('scroll'));return true;}
+  };
   let release;
   const hold=new Promise(resolve=>release=resolve);
   const environment={window,document,storage:{getItem(){if(denyStorage)throw Error('denied');return null;},setItem(){}},loadDependencies:async()=>{calls.load++;if(rejectLoad)throw Error('module failed');return pending?hold:deps;},createUniverse:async()=>{calls.created++;return {update:frame=>calls.frames.push(frame),resize(){},setQuality(){},dispose(){calls.disposed++;}};}};
@@ -61,4 +67,26 @@ test('pageshow on an already active document cannot create a second renderer',as
   const f=fixture(),handle=await module.startMotion({root:f.document,projects:[],environment:f.environment});await settle();
   f.window.dispatchEvent(new Event('pageshow'));await settle();
   assert.equal(f.calls.created,1);assert.equal(f.ticker.size,1);handle.stop();
+});
+
+test('desktop Lenis stays scrollable outside journey and at deep links without rendering offscreen',async()=>{
+  for(const initial of [0,6000]){
+    const f=fixture({fine:true});f.window.scrollY=initial;
+    const handle=await module.startMotion({root:f.document,projects:[],environment:f.environment});await settle();
+    assert.equal(f.calls.lenis.stopped,false,'deep-link entry must not lock wheel input');
+    f.window.scrollY=6000;f.window.dispatchEvent(new Event('scroll'));
+    assert.equal(f.ticker.size,1,'smooth scrolling still needs its frame loop');
+    const graphics=f.calls.frames.length,scrollFrames=f.calls.lenis.frames;
+    for(const cb of f.ticker)cb(1);
+    assert.equal(f.calls.frames.length,graphics,'offscreen graphics must remain suspended');
+    assert.equal(f.calls.lenis.frames,scrollFrames+1);
+    assert.ok(f.calls.lenis.wheel(100));assert.ok(f.calls.lenis.wheel(-4000));
+    for(const cb of f.ticker)cb(2);
+    assert.ok(f.calls.frames.length>graphics,'returning resumes graphics');
+    f.dialog.open=true;f.document.dispatchEvent(new Event('portfolio:dialog'));
+    assert.equal(f.ticker.size,0);assert.equal(f.calls.lenis.stopped,true);
+    f.dialog.open=false;f.document.dispatchEvent(new Event('portfolio:dialog'));
+    assert.equal(f.calls.lenis.stopped,false);assert.equal(f.ticker.size,1);
+    handle.stop();assert.equal(f.ticker.size,0);assert.equal(f.calls.lenis.destroyed,true);
+  }
 });

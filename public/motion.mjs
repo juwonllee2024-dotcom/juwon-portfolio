@@ -16,7 +16,7 @@ export async function startMotion({root,projects,environment=defaultEnvironment(
   const chapters=Array.from(root.querySelectorAll('[data-story-chapter]'));
   const media=win.matchMedia('(prefers-reduced-motion: reduce)');
   const dialog=root.querySelector('#detail');
-  let disabled=false,stopped=false,generation=0,engine=null,deps=null,lenis=null,ticking=false,quality='low',monitor=null;
+  let disabled=false,stopped=false,generation=0,engine=null,deps=null,lenis=null,ticking=false,insideJourney=false,quality='low',monitor=null;
   const cleanups=[],animations=[],splits=[],clones=[];
   try{disabled=env.storage?.getItem('juwon-motion-disabled')==='true';}catch{}
   function buttonState(){if(!button)return;button.setAttribute('aria-pressed',String(disabled||media.matches));button.disabled=media.matches;button.textContent=media.matches?'모션 꺼짐':disabled?'모션 켜기':'모션 끄기';}
@@ -35,6 +35,7 @@ export async function startMotion({root,projects,environment=defaultEnvironment(
   function tick(seconds){
     if(stopped||!engine||doc.hidden||dialog?.open)return;
     lenis?.raf(seconds*1000);
+    if(!insideJourney)return;
     const next=monitor.record({timeMs:now(),visible:true});
     if(next==='off'){disabled=true;deactivate();buttonState();return;}
     if(next!==quality){quality=next;engine.setQuality(next);resize();}
@@ -45,7 +46,10 @@ export async function startMotion({root,projects,environment=defaultEnvironment(
   function sync(){
     if(!engine||stopped)return;
     const r=journey.getBoundingClientRect();
-    const active=!doc.hidden&&!dialog?.open&&r.bottom>0&&r.top<win.innerHeight;
+    insideJourney=r.bottom>0&&r.top<win.innerHeight;
+    // Lenis owns document scrolling, so its clock must outlive the visible 3D scene.
+    const active=!doc.hidden&&!dialog?.open&&(insideJourney||!!lenis);
+    if(!insideJourney)monitor.reset(now());
     if(!active){suspend();monitor.reset(now());return;}
     if(!ticking){monitor.reset(now());deps.gsap.ticker.add(tick);ticking=true;lenis?.start();}
   }
