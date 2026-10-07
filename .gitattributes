@@ -1,0 +1,3 @@
+# Reviewed vendor hashes cover exact bytes, including line endings.
+public/vendor-*.mjs text eol=lf
+public/motion-licenses.txt text eol=lf

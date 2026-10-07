@@ -49,4 +49,6 @@ These are private response transformations, not public app backdoors. They are s
 
 ## Deployment gate
 
+Local integration exposed Windows automatic CRLF conversion of all four reviewed vendor modules. The existing checksum regression failed on main (31/32); converting CRLF back to LF reproduced all four pinned hashes exactly. Repository-local attributes now retain LF for vendor artifacts, without changing global Git settings or weakening checksum validation. Tests and build must pass after this checkout correction before workspace cleanup.
+
 Run the full tests/build/diff check, finish independent review, then publish only the reviewed commit through the owner's existing Git integration. Confirm Cloudflare Pages, Workers Builds and GitHub Pages and the corresponding public files before changing this status to published. Preserve unrelated services and remove only this task's temporary processes.
