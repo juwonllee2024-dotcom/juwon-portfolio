@@ -45,6 +45,21 @@ function backend() {
   return {state,THREE:{...THREE,WebGLRenderer:Renderer,TextureLoader:Loader}};
 }
 const projects=Array.from({length:10},(_,i)=>({id:i===0?'iphone':i===1?'village':'screen-'+i,exhibit:{shots:[{src:'./'+i+'-screen.jpg',alt:'screen',caption:'UI preview'}]}}));
+
+test('core sculptures use lit reflective surfaces with selective emission and release their studio texture',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.resize(1440,900,2);engine.update(sampleStory(.81),0);
+  const scene=b.state.scene,lights=[],surfaces=[];
+  scene.traverse(n=>{if(n.isLight)lights.push(n);if(n.isMesh&&n.material.isMeshStandardMaterial)surfaces.push(n);});
+  assert.ok(lights.length>=3,'key, fill and rim illumination must shape the sculpture');
+  assert.ok(scene.environment?.isDataTexture,'reflective objects need a bounded studio environment');
+  assert.ok(surfaces.length>=24,'architecture must have actual lit surfaces, not flat silhouettes');
+  assert.ok(surfaces.some(n=>n.material.metalness>.5));
+  assert.ok(surfaces.some(n=>n.material.emissiveIntensity>1));
+  assert.ok(lights.every(n=>!n.castShadow),'no extra shadow-map passes on the laptop');
+  let released=0;scene.environment.addEventListener('dispose',()=>released++);
+  engine.dispose();engine.dispose();assert.equal(released,1);
+});
 test('actual scene respects low-power draw budget, cache capacity and resource lifetime',async()=>{
   assert.equal(typeof universe.init,'function');
   const b=backend(),canvas=new EventTarget();

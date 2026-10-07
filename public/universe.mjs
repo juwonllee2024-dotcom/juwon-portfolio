@@ -7,12 +7,23 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   renderer.setClearColor(0x000000,0);
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.15;
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(44,1,.1,150);
   const resources=new Set(),cache=new Map(),cards=new Map();
   let disposed=false,failed=false,composer=null,currentQuality=quality;
   const keep=r=>{resources.add(r);return r;};
   const release=r=>{if(resources.delete(r))r.dispose();};
   const material=(color,opacity=1)=>keep(new T.MeshBasicMaterial({color,transparent:true,opacity,wireframe:false,depthWrite:false}));
+  const surface=(color,glow=false)=>keep(new T.MeshPhysicalMaterial({color,metalness:glow?.35:.78,roughness:glow?.25:.3,clearcoat:quality==='high'?.65:0,clearcoatRoughness:.2,emissive:glow?color:0x000000,emissiveIntensity:glow?1.6:0}));
+  // Tiny procedural studio panorama: bright softboxes reflected in real material normals.
+  const pixels=new Uint8Array(128*64*4);
+  for(let y=0;y<64;y++)for(let x=0;x<128;x++){
+    const a=x/128,b=y/64,softbox=Math.exp(-(((a-.22)/.055)**2+((b-.4)/.24)**2)),rim=Math.exp(-(((a-.72)/.025)**2+((b-.5)/.3)**2));
+    const i=(y*128+x)*4;pixels[i]=Math.min(255,18+softbox*237+rim*110);pixels[i+1]=Math.min(255,24+softbox*220+rim*231);pixels[i+2]=Math.min(255,30+softbox*195+rim*225);pixels[i+3]=255;
+  }
+  const studio=keep(new T.DataTexture(pixels,128,64,T.RGBAFormat));studio.mapping=T.EquirectangularReflectionMapping;studio.colorSpace=T.SRGBColorSpace;studio.needsUpdate=true;scene.environment=studio;
+  scene.add(new T.HemisphereLight(0xe5f4ff,0x132025,1.3));
+  for(const [color,intensity,position] of [[0xfff0d9,3.5,[4,7,6]],[0x8ddfff,4,[-5,3,-4]],[0xd5f5bd,1.5,[2,-1,5]]]){const light=new T.DirectionalLight(color,intensity);light.position.set(...position);scene.add(light);}
   const root=new T.Group();scene.add(root);
   const starPositions=new Float32Array(1200*3);
   for(let i=0;i<1200;i++){
@@ -22,28 +33,29 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
     starPositions[i*3+2]=Math.cos(b)*r-12;
   }
   const starGeometry=keep(new T.BufferGeometry());starGeometry.setAttribute('position',new T.BufferAttribute(starPositions,3));
-  const stars=new T.Points(starGeometry,keep(new T.PointsMaterial({color:0xc9dfdf,size:.045,transparent:true,opacity:.6,depthWrite:false})));root.add(stars);
-  const spark=new T.Mesh(keep(new T.IcosahedronGeometry(.4,2)),material(0xc8f36b));root.add(spark);
+  const stars=new T.Points(starGeometry,keep(new T.PointsMaterial({color:0xc9dfdf,size:.035,transparent:true,opacity:.32,depthWrite:false})));root.add(stars);
+  const spark=new T.Mesh(keep(new T.IcosahedronGeometry(1.2,2)),surface(0xb5c5cb));root.add(spark);
   const orbit=new T.Group();root.add(orbit);
   for(let i=0;i<5;i++){
-    const ring=new T.Mesh(keep(new T.TorusGeometry(3+i*.52,.012,6,110)),material(i%2?0x82cccc:0xc8f36b,.42));
+    const ring=new T.Mesh(keep(new T.TorusGeometry(3+i*.52,.026,6,110)),surface(i%2?0x7fcacb:0xd0d8c8));
     ring.rotation.set(i*.37,i*.62,i*.26);orbit.add(ring);
   }
   const cores=coreIds.map((id,index)=>{
     const group=new T.Group();root.add(group);
     if(index===0){
-      const geometry=keep(new T.BoxGeometry(.4,1,.4)),paint=material(0xc8f36b,.6);
-      for(let i=0;i<24;i++){const box=new T.Mesh(geometry,paint);box.position.set((i%6-2.5)*.75,-1,(Math.floor(i/6)-1.5)*.75);box.scale.y=.5+(i*7%11)/4;group.add(box);}
+      const geometry=keep(new T.BoxGeometry(.45,1,.45)),paint=surface(0x88999f),trim=surface(0xa4e1c0,true),roof=keep(new T.BoxGeometry(.48,.045,.48));
+      const base=new T.Mesh(keep(new T.CylinderGeometry(3.05,3.2,.18,48)),surface(0x35434a));base.position.y=-1.3;group.add(base);
+      for(let i=0;i<24;i++){const height=.7+(i*7%11)/4;const box=new T.Mesh(geometry,paint);box.position.set((i%6-2.5)*.75,-1.2+height/2,(Math.floor(i/6)-1.5)*.75);box.scale.y=height;group.add(box);const cap=new T.Mesh(roof,trim);cap.position.set(box.position.x,-1.2+height,box.position.z);group.add(cap);}
     }else if(index===1){
       const vertices=[];
       for(let i=0;i<40;i++){const a=i*2.399963,r=1.3+(i%7)*.19;vertices.push(new T.Vector3(Math.cos(a)*r,Math.sin(a)*r,Math.sin(i*1.3)*1.6));}
       const lines=[];for(let i=0;i<vertices.length;i++){lines.push(vertices[i],vertices[(i+7)%vertices.length]);}
       group.add(new T.LineSegments(keep(new T.BufferGeometry().setFromPoints(lines)),keep(new T.LineBasicMaterial({color:0x8adfdd,transparent:true,opacity:.7}))));
-      const sphere=keep(new T.SphereGeometry(.07,8,6)),paint=material(0x8adfdd);
+      const sphere=keep(new T.SphereGeometry(.11,12,8)),paint=surface(0x8adfdd,true);
       vertices.forEach(v=>{const node=new T.Mesh(sphere,paint);node.position.copy(v);group.add(node);});
     }else{
-      for(let i=0;i<3;i++){const ring=new T.Mesh(keep(new T.TorusGeometry(1.5+i*.25,.018,8,80)),material(0xc8f36b,.8));ring.rotation.set(i*Math.PI/3,i*.7,0);group.add(ring);}
-      const diamond=new T.Mesh(keep(new T.OctahedronGeometry(.65)),material(0xf3edcf,.85));group.add(diamond);
+      for(let i=0;i<3;i++){const ring=new T.Mesh(keep(new T.TorusGeometry(1.5+i*.25,.075,10,80)),surface(i===1?0xb3e4cc:0xc1cbd1,i===1));ring.rotation.set(i*Math.PI/3,i*.7,0);group.add(ring);}
+      const diamond=new T.Mesh(keep(new T.OctahedronGeometry(.95)),surface(0xdce5ec));group.add(diamond);
     }
     return group;
   });
@@ -95,10 +107,11 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       camera.position.set(...frame.camera.position);camera.lookAt(...frame.camera.target);
       stars.rotation.z=timeSeconds*.009;stars.rotation.y=frame.local*.03;
       spark.visible=frame.chapter==='spark'||frame.chapter==='convergence';
-      spark.scale.setScalar(frame.chapter==='spark'?.5+frame.local*2:.35);
+      spark.scale.setScalar(frame.chapter==='spark'?.8+frame.local*.7:.45);
+      spark.position.x=camera.aspect>=1.2?3.2:0;
       spark.rotation.y=timeSeconds*.13;
       orbit.visible=frame.chapter!=='spark';orbit.rotation.set(frame.local*.15,timeSeconds*.03,frame.chapter==='convergence'?frame.local*.2:.3);
-      cores.forEach((group,i)=>{group.visible=frame.chapter==='core'&&frame.focusId===coreIds[i];group.rotation.y=timeSeconds*.09;group.position.set(0,.3,-1);});
+      cores.forEach((group,i)=>{group.visible=frame.chapter==='core'&&frame.focusId===coreIds[i];group.rotation.set(.12,timeSeconds*.065,0);group.position.set(camera.aspect>=1.2?2.3:0,.8,-1);group.scale.setScalar(camera.aspect>=1.2?1.35:.85);});
       const candidates=frame.focusId?[frame.focusId,(frame.chapter==='core'?coreIds:workIds)[((frame.chapter==='core'?coreIds:workIds).indexOf(frame.focusId)+1)%3]]:frame.chapter==='constellation'?projects.filter(p=>p.exhibit?.shots?.length&&!coreIds.includes(p.id)).slice(0,qualityLimits(currentQuality).textures).map(p=>p.id):[];
       candidates.forEach(id=>loadScreen(projects.find(p=>p.id===id)));
       let index=0;
