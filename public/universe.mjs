@@ -85,6 +85,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   }
   function configure(){
     const limits=qualityLimits(currentQuality);starGeometry.setDrawRange(0,limits.particles);
+    for(const resource of resources)if(resource.isMeshPhysicalMaterial){const coat=currentQuality==='high'?.65:0;if(resource.clearcoat!==coat){resource.clearcoat=coat;resource.needsUpdate=true;}}
     if(composer){composer.dispose();composer=null;}
     const P=dependencies.postprocessing;
     if(limits.bloom&&P){
@@ -107,7 +108,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       camera.position.set(...frame.camera.position);camera.lookAt(...frame.camera.target);
       stars.rotation.z=timeSeconds*.009;stars.rotation.y=frame.local*.03;
       spark.visible=frame.chapter==='spark'||frame.chapter==='convergence';
-      spark.scale.setScalar(frame.chapter==='spark'?.8+frame.local*.7:.45);
+      spark.scale.setScalar(frame.chapter==='spark'?(camera.aspect>=1.2?2.25+frame.local*.7:.8+frame.local*.7):.45);
       spark.position.x=camera.aspect>=1.2?3.2:0;
       spark.rotation.y=timeSeconds*.13;
       orbit.visible=frame.chapter!=='spark';orbit.rotation.set(frame.local*.15,timeSeconds*.03,frame.chapter==='convergence'?frame.local*.2:.3);

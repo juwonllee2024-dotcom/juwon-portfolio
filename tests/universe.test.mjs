@@ -60,6 +60,26 @@ test('core sculptures use lit reflective surfaces with selective emission and re
   let released=0;scene.environment.addEventListener('dispose',()=>released++);
   engine.dispose();engine.dispose();assert.equal(released,1);
 });
+
+test('automatic quality downgrade disables costly clearcoat on every physical surface',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'high',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.update(sampleStory(.81),0);
+  const materials=new Set();b.state.scene.traverse(n=>{if(n.isMesh&&n.material.isMeshPhysicalMaterial)materials.add(n.material);});
+  assert.ok([...materials].some(m=>m.clearcoat>0));
+  engine.setQuality('low');
+  assert.ok([...materials].every(m=>m.clearcoat===0),'low quality must disable secondary coat shading');
+  engine.dispose();
+});
+
+test('desktop origin sculpture is a substantial object rather than a tiny decorative dot',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.resize(1440,900,1);engine.update(sampleStory(0),0);
+  let spark;b.state.scene.traverse(n=>{if(n.isMesh&&n.geometry.type==='IcosahedronGeometry')spark=n;});
+  const box=new THREE.Box3().setFromObject(spark),xs=[];
+  for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z])xs.push(new THREE.Vector3(x,y,z).project(b.state.camera).x);
+  assert.ok((Math.max(...xs)-Math.min(...xs))*720>=200,'origin object must occupy at least 200 desktop pixels');
+  assert.ok(xs.every(x=>Math.abs(x)<=1),'origin sculpture must fit horizontally');engine.dispose();
+});
 test('actual scene respects low-power draw budget, cache capacity and resource lifetime',async()=>{
   assert.equal(typeof universe.init,'function');
   const b=backend(),canvas=new EventTarget();
