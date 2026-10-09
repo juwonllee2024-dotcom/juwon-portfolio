@@ -89,3 +89,6 @@ html{scroll-padding-top:88px}body{background:#080b09}.header{position:fixed!impo
 @media(prefers-reduced-motion:reduce) and (max-height:560px){
   .motion-layout .scene-panel{position:relative!important;height:auto!important;min-height:100svh!important}
 }
+.detail-source{margin:16px 0;max-width:100%}
+.detail-source .primary{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.detail-source p{font-size:14px;line-height:1.7;color:var(--muted);margin:10px 0}

@@ -51,6 +51,16 @@ Private capture review files and isolated preview state are ignored and never bu
 
 Edit exhibit metadata in `public/catalog.mjs`, rendering in `public/showcase.mjs`, and styles in `public/style.css`. Adding screenshots requires privacy review, relative asset URLs, matching file signatures/MIME types and an updated public-build allowlist test. These are static assets; no model, local server or runtime video processing is deployed.
 
+## Project source links
+
+Existing records and the cinematic journey remain unchanged. Detail dialogs now distinguish verified source repositories, shared Company OS sources, external-upstream copies and original-source snapshots. They retain existing channel/upstream links and explain missing sources instead of inventing URLs.
+
+Repository mappings and review notes live in `public/catalog.mjs`; rendering is `renderProjectLinks` in `public/showcase.mjs`. Update a link only after verifying project identity, source scope and the actual GitHub destination. A repository's current version may differ from the recorded screenshot.
+
+Nine original source snapshots were published under the owner's account. Included source files were copied without rewriting; private runtime/configuration state and source history were excluded. AntiStudy creation is pending because GitHub rate-limited repository creation. KRAUDE, Second Brain and other privacy-review cases keep pending notices. See `docs/repository-link-verification.md` for exact scope, repository proofs and limitations.
+
+`scripts/source-snapshot.mjs` is a local preparation helper, not a public endpoint, auto-publisher or CI dependency. It requires explicit selections, rejects symlinks/private-shaped text, requires separate reviewed hashes for binaries, and refuses occupied destinations or changed originals. Keep private preparation records under ignored `.artifacts/`; never publish that directory.
+
 ## Manual deployment of the existing Workers mirror
 
 ```sh
