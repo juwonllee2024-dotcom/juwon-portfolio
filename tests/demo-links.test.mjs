@@ -16,3 +16,14 @@ test('demo links reject unreviewed hosts, credentials and scripts',()=>{
     assert.doesNotMatch(html,/href=/);
   }
 });
+test('reviewed Seoul Zero and Diamond Rivalry demos retain their own source links',()=>{
+  for(const [demo,repository] of [
+    ['https://seoul-zero-demo.juwonllee2026.workers.dev/','https://github.com/juwonllee2024-dotcom/seoul-zero'],
+    ['https://diamond-rivalry-demo.juwonllee2026.workers.dev/','https://github.com/juwonllee2024-dotcom/diamond-rivalry']
+  ]) {
+    const html=renderProjectLinks({demo:{url:demo,note:'검증된 공개 게임'},repositories:[{url:repository,kind:'source'}]});
+    assert.ok(html.includes(`href="${demo}"`));
+    assert.ok(html.includes(`href="${repository}"`));
+    assert.match(html,/체험하기/);
+  }
+});

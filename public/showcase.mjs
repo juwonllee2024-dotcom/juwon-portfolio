@@ -19,7 +19,7 @@ export function renderProjectLinks(project) {
   const seen = new Set();
   const labels = {source:'GitHub 코드 저장소',shared:'공용 코드 저장소', 'upstream-copy':'외부 원작 기반 사본',snapshot:'원본 코드 공개 스냅샷',integration:'활용 실험 코드 저장소'};
   const links = [];
-  if (project.demo?.url === 'https://zephyr-demo.juwonllee2026.workers.dev/') {
+  if (['https://zephyr-demo.juwonllee2026.workers.dev/','https://seoul-zero-demo.juwonllee2026.workers.dev/','https://diamond-rivalry-demo.juwonllee2026.workers.dev/'].includes(project.demo?.url)) {
     links.push(`<div class="detail-source"><a class="primary" href="${esc(project.demo.url)}" target="_blank" rel="noopener noreferrer">체험하기 <span>↗</span></a><p>${esc(project.demo.note || '')}</p></div>`);
   }
   for (const repo of project.repositories || []) {
