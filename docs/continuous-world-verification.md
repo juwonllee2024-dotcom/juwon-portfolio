@@ -22,6 +22,7 @@ Keep the complex lit 3D, but remove chapter-based teleporting and sudden asset a
 - Mobile 360x780: height stayed 9245.5px; scrollY differed only by 0.5px rounding; no horizontal overflow. Viewport override reset afterward.
 - Private reduced-live fixture simulates the media event and activates actual reduced-motion CSS while retaining compound width/height conditions. It does not change OS preferences. RED: established height 10421.40px fell to 6082.20px. GREEN: height remained 10421.40px, graphics stopped and the toggle became disabled. Mobile retained 9245.5px with no overflow when toggling the simulated preference.
 - Real lit sculptures and artwork screens were visually inspected in their shared spatial route. Initial browser CLI connection attempts failed; the in-app browser was used for real observations instead. Those failed attempts are not counted as verification.
+- After the cadence correction, the private performance fixture recorded 33.33ms and motion-ready persisted through the subsequent verification/build interval; the camera then arrived at the KRAUDE station with actual lit geometry visible. This is one local browser cadence observation, not a universal hardware guarantee.
 
 ## Independent review
 
