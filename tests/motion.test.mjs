@@ -22,7 +22,7 @@ function fixture({reduced=false,denyStorage=false,rejectLoad=false,pending=false
   };
   let release;
   const hold=new Promise(resolve=>release=resolve);
-  const environment={window,document,storage:{getItem(){if(denyStorage)throw Error('denied');return null;},setItem(){}},loadDependencies:async()=>{calls.load++;if(rejectLoad)throw Error('module failed');return pending?hold:deps;},createUniverse:async()=>{calls.created++;return {update:frame=>calls.frames.push(frame),resize(){},setQuality(){},dispose(){calls.disposed++;}};}};
+  const environment={window,document,storage:{getItem(){if(denyStorage)throw Error('denied');return null;},setItem(){}},loadDependencies:async()=>{calls.load++;if(rejectLoad)throw Error('module failed');return pending?hold:deps;},createUniverse:async options=>{calls.created++;calls.fail=options.onFailure;return {update:frame=>calls.frames.push(frame),resize(){},setQuality(){},dispose(){calls.disposed++;}};}};
   return {environment,document,window,button,dialog,ticker,calls,classes,release:()=>release(deps)};
 }
 test('reduced motion shows document without loading graphics or starting a loop',async()=>{
@@ -67,6 +67,16 @@ test('pageshow on an already active document cannot create a second renderer',as
   const f=fixture(),handle=await module.startMotion({root:f.document,projects:[],environment:f.environment});await settle();
   f.window.dispatchEvent(new Event('pageshow'));await settle();
   assert.equal(f.calls.created,1);assert.equal(f.ticker.size,1);handle.stop();
+});
+
+test('runtime graphics fallback retains established reading layout without keeping GPU resources',async()=>{
+  const f=fixture(),handle=await module.startMotion({root:f.document,projects:[],environment:f.environment});await settle();
+  assert.ok(f.classes.has('motion-layout'),'successful enhancement establishes persistent geometry');
+  f.calls.fail(new Error('context lost'));
+  assert.ok(f.classes.has('motion-layout'));assert.ok(f.classes.has('motion-off'));
+  assert.equal(f.calls.disposed,1);assert.equal(f.ticker.size,0);handle.stop();
+  const reduced=fixture({reduced:true}),staticHandle=await module.startMotion({root:reduced.document,projects:[],environment:reduced.environment});await settle();
+  assert.ok(!reduced.classes.has('motion-layout'),'initial static document remains compact');staticHandle.stop();
 });
 
 test('desktop Lenis stays scrollable outside journey and at deep links without rendering offscreen',async()=>{

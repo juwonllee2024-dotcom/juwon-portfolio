@@ -86,7 +86,7 @@ export async function startMotion({root,projects,environment=defaultEnvironment(
       const created=await env.createUniverse({canvas,projects,quality,dependencies:{THREE:deps.THREE,postprocessing:deps.postprocessing},onFailure:()=>{disabled=true;deactivate();buttonState();}});
       if(stopped||token!==generation){created.dispose();return;}
       engine=created;monitor=createFrameMonitor(quality);monitor.reset(now());
-      typography();body.classList.remove('motion-off');body.classList.add('motion-ready');
+      typography();body.classList.remove('motion-off');body.classList.add('motion-ready','motion-layout');
       if(win.matchMedia('(pointer: fine)').matches&&deps.Lenis){lenis=new deps.Lenis({autoRaf:false,anchors:true,smoothWheel:true,syncTouch:false,prevent:node=>node.closest?.('dialog')});lenis.on('scroll',deps.ScrollTrigger.update);}
       animations.push(deps.ScrollTrigger.create({trigger:journey,start:'top bottom',end:'bottom top',onEnter:sync,onLeave:sync,onEnterBack:sync,onLeaveBack:sync}));
       resize();deps.ScrollTrigger.refresh();

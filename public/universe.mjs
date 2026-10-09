@@ -10,7 +10,8 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   renderer.toneMappingExposure=1.15;
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(44,1,.1,150);
   const resources=new Set(),cache=new Map(),cards=new Map();
-  let disposed=false,failed=false,composer=null,currentQuality=quality,lastTime=0;
+  let disposed=false,failed=false,composer=null,currentQuality=quality,lastTime=0,cameraStarted=false;
+  const aim=new T.Vector3(),desiredPosition=new T.Vector3(),desiredAim=new T.Vector3();
   const keep=r=>{resources.add(r);return r;};
   const release=r=>{if(resources.delete(r))r.dispose();};
   const material=(color,opacity=1)=>keep(new T.MeshBasicMaterial({color,transparent:true,opacity,wireframe:false,depthWrite:false}));
@@ -76,7 +77,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
     if(cache.has(project.id)){const entry=cache.get(project.id);cache.delete(project.id);cache.set(project.id,entry);return;}
     const cap=qualityLimits(currentQuality).textures;if(!cap)return;
     if(cache.size>=cap)return; // Wait for a fading outgoing card rather than popping it away.
-    const entry={id:project.id,texture:null,mesh:null,readyAt:null,startAlpha:0,exitAt:null,exitAlpha:0};cache.set(project.id,entry);
+    const entry={id:project.id,texture:null,mesh:null,readyAt:null,startAlpha:0,exitAt:null,exitAlpha:0,maxOpacity:[...workIds,...coreIds].includes(project.id)?.88:.28};cache.set(project.id,entry);
     loader.load(shot.src,texture=>{
       if(disposed || cache.get(project.id)!==entry){texture.dispose();return;}
       texture.colorSpace=T.SRGBColorSpace;entry.texture=keep(texture);
@@ -109,8 +110,12 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   return {
     update(frame,timeSeconds){
       if(disposed)return;
+      const dt=Math.max(0,Math.min(.05,timeSeconds-lastTime));
       lastTime=Number.isFinite(timeSeconds)?timeSeconds:lastTime;
-      camera.position.set(...frame.camera.position);camera.lookAt(...frame.camera.target);
+      desiredPosition.set(...frame.camera.position);desiredAim.set(...frame.camera.target);
+      if(!cameraStarted){camera.position.copy(desiredPosition);aim.copy(desiredAim);cameraStarted=true;}
+      else{const distance=camera.position.distanceTo(desiredPosition),blend=Math.min(1-Math.exp(-dt/.18),distance>0?120*dt/distance:1);camera.position.lerp(desiredPosition,blend);aim.lerp(desiredAim,blend);}
+      camera.lookAt(aim);
       const layout=Math.max(0,Math.min(1,(camera.aspect-.8)/.4));
       spark.scale.setScalar(.8+1.45*layout);spark.position.x=3.2*layout;
       spark.rotation.y=timeSeconds*.13;
@@ -126,12 +131,12 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       const wanted=new Set(candidates);
       const ease=t=>{const x=Math.max(0,Math.min(1,t));return x*x*(3-2*x);};
       for(const [id,entry] of cache){
-        if(wanted.has(id)&&entry.exitAt!==null){entry.startAlpha=(entry.mesh?.material.opacity||0)/.88;entry.readyAt=lastTime;entry.exitAt=null;}
-        if(!wanted.has(id)&&entry.exitAt===null){entry.exitAt=lastTime;entry.exitAlpha=(entry.mesh?.material.opacity||0)/.88;}
+        if(wanted.has(id)&&entry.exitAt!==null){entry.startAlpha=(entry.mesh?.material.opacity||0)/entry.maxOpacity;entry.readyAt=lastTime;entry.exitAt=null;}
+        if(!wanted.has(id)&&entry.exitAt===null){entry.exitAt=lastTime;entry.exitAlpha=(entry.mesh?.material.opacity||0)/entry.maxOpacity;}
         if(entry.exitAt!==null&&(!entry.mesh||lastTime-entry.exitAt>=.3)){cache.delete(id);removeEntry(entry);continue;}
         if(entry.mesh){
           const alpha=entry.exitAt!==null?entry.exitAlpha*(1-ease((lastTime-entry.exitAt)/.3)):entry.startAlpha+(1-entry.startAlpha)*ease((lastTime-entry.readyAt)/.45);
-          entry.mesh.material.opacity=.88*alpha;
+          entry.mesh.material.opacity=entry.maxOpacity*alpha;
         }
       }
       candidates.forEach(id=>loadScreen(photographed.find(p=>p.id===id)));

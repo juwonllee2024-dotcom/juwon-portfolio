@@ -55,6 +55,18 @@ test('sculptures keep their world coordinates and do not toggle existence at cha
   engine.dispose();
 });
 
+test('a large scroll jump moves camera and aim gradually instead of teleporting',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.update(sampleStory(.4),0);const first=b.state.camera.position.clone();
+  engine.update(sampleStory(.96),.016);const moved=b.state.camera.position.clone();
+  assert.ok(moved.x>first.x&&moved.x-first.x<3,'one frame cannot skip entire exhibition stations');
+  engine.update(sampleStory(.4),.032);
+  assert.ok(Math.abs(b.state.camera.position.x-moved.x)<3,'reverse scroll also stays continuous');
+  for(let i=3;i<180;i++)engine.update(sampleStory(.96),i*.016);
+  assert.ok(Math.abs(b.state.camera.position.x-110)<.1,'camera must eventually reach requested station');
+  engine.dispose();
+});
+
 test('late screenshots fade into fixed positions without a load-completion pop',async()=>{
   const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
   engine.resize(1440,900,1);engine.update(sampleStory(.4),10);
@@ -156,10 +168,11 @@ test('bounded screenshot cache fades old visible cards out before releasing them
   engine.update(sampleStory(.2),0);
   b.state.loads.forEach(r=>r.success(new THREE.Texture({width:1280,height:720})));
   engine.update(sampleStory(.2),1);const old=[];b.state.scene.traverse(n=>{if(n.userData.projectId)old.push(n);});
+  const oldOpacity=new Map(old.map(n=>[n,n.material.opacity]));
   engine.update(sampleStory(.4),1);
   assert.ok(old.every(n=>n.parent),'cache change must not delete visible cards in one frame');
   engine.update(sampleStory(.4),1.15);
-  assert.ok(old.some(n=>n.parent&&n.material.opacity>0&&n.material.opacity<.88),'departing cards fade gradually');
+  assert.ok(old.some(n=>n.parent&&n.material.opacity>0&&n.material.opacity<oldOpacity.get(n)),'departing cards fade gradually');
   engine.update(sampleStory(.4),1.31);
   assert.ok(old.some(n=>!n.parent),'fully faded cards release their GPU resources');
   let cards=0;b.state.scene.traverse(n=>{if(n.userData.projectId)cards++;});assert.ok(cards<=4);
