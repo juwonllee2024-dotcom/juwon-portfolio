@@ -1,5 +1,5 @@
 import {qualityLimits} from './motion-policy.mjs';
-import {coreIds,workIds} from './story.mjs';
+import {coreIds,workIds,worldPosition} from './story.mjs';
 
 export async function init({canvas,projects,quality,dependencies,onFailure=()=>{}}) {
   const T=dependencies.THREE;
@@ -10,7 +10,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   renderer.toneMappingExposure=1.15;
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(44,1,.1,150);
   const resources=new Set(),cache=new Map(),cards=new Map();
-  let disposed=false,failed=false,composer=null,currentQuality=quality;
+  let disposed=false,failed=false,composer=null,currentQuality=quality,lastTime=0;
   const keep=r=>{resources.add(r);return r;};
   const release=r=>{if(resources.delete(r))r.dispose();};
   const material=(color,opacity=1)=>keep(new T.MeshBasicMaterial({color,transparent:true,opacity,wireframe:false,depthWrite:false}));
@@ -28,13 +28,16 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   const starPositions=new Float32Array(1200*3);
   for(let i=0;i<1200;i++){
     const a=i*2.399963,b=Math.acos(1-2*(i+.5)/1200),r=14+(i%19);
-    starPositions[i*3]=Math.sin(b)*Math.cos(a)*r;
+    starPositions[i*3]=Math.sin(b)*Math.cos(a)*r+((i*17)%131)-10;
     starPositions[i*3+1]=Math.sin(b)*Math.sin(a)*r;
     starPositions[i*3+2]=Math.cos(b)*r-12;
   }
   const starGeometry=keep(new T.BufferGeometry());starGeometry.setAttribute('position',new T.BufferAttribute(starPositions,3));
   const stars=new T.Points(starGeometry,keep(new T.PointsMaterial({color:0xc9dfdf,size:.035,transparent:true,opacity:.32,depthWrite:false})));root.add(stars);
   const spark=new T.Mesh(keep(new T.IcosahedronGeometry(1.2,2)),surface(0xb5c5cb));root.add(spark);
+  const milestone=new T.Mesh(keep(new T.IcosahedronGeometry(.65,2)),surface(0x9ed9cf,true));milestone.position.set(60,0,0);root.add(milestone);
+  const routePoints=[new T.Vector3(0,-4,-2),new T.Vector3(110,-4,-2)];
+  root.add(new T.Line(keep(new T.BufferGeometry().setFromPoints(routePoints)),keep(new T.LineBasicMaterial({color:0x8adfdd,transparent:true,opacity:.22}))));
   const orbit=new T.Group();root.add(orbit);
   for(let i=0;i<5;i++){
     const ring=new T.Mesh(keep(new T.TorusGeometry(3+i*.52,.026,6,110)),surface(i%2?0x7fcacb:0xd0d8c8));
@@ -72,8 +75,8 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
     if(!shot || !/^\.\/[a-z0-9-]+\.(png|jpg)$/.test(shot.src))return;
     if(cache.has(project.id)){const entry=cache.get(project.id);cache.delete(project.id);cache.set(project.id,entry);return;}
     const cap=qualityLimits(currentQuality).textures;if(!cap)return;
-    while(cache.size>=cap){const [id,entry]=cache.entries().next().value;cache.delete(id);removeEntry(entry);}
-    const entry={id:project.id,texture:null,mesh:null};cache.set(project.id,entry);
+    if(cache.size>=cap)return; // Wait for a fading outgoing card rather than popping it away.
+    const entry={id:project.id,texture:null,mesh:null,readyAt:null,startAlpha:0,exitAt:null,exitAlpha:0};cache.set(project.id,entry);
     loader.load(shot.src,texture=>{
       if(disposed || cache.get(project.id)!==entry){texture.dispose();return;}
       texture.colorSpace=T.SRGBColorSpace;entry.texture=keep(texture);
@@ -81,6 +84,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       const geometry=keep(new T.PlaneGeometry(5.4,5.4/ratio));
       const paint=keep(new T.MeshBasicMaterial({map:texture,transparent:true,opacity:0,depthWrite:false,toneMapped:false,side:T.DoubleSide}));
       entry.mesh=new T.Mesh(geometry,paint);entry.mesh.userData.projectId=project.id;root.add(entry.mesh);cards.set(project.id,entry.mesh);
+      entry.mesh.position.set(...worldPosition(project.id));entry.mesh.rotation.set(-.06,0,0);entry.mesh.scale.setScalar(.95);entry.readyAt=lastTime;
     },undefined,error=>{if(cache.get(project.id)===entry)fail(error);});
   }
   function configure(){
@@ -105,24 +109,32 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
   return {
     update(frame,timeSeconds){
       if(disposed)return;
+      lastTime=Number.isFinite(timeSeconds)?timeSeconds:lastTime;
       camera.position.set(...frame.camera.position);camera.lookAt(...frame.camera.target);
-      stars.rotation.z=timeSeconds*.009;stars.rotation.y=frame.local*.03;
-      spark.visible=frame.chapter==='spark'||frame.chapter==='convergence';
-      spark.scale.setScalar(frame.chapter==='spark'?(camera.aspect>=1.2?2.25+frame.local*.7:.8+frame.local*.7):.45);
-      spark.position.x=camera.aspect>=1.2?3.2:0;
+      const layout=Math.max(0,Math.min(1,(camera.aspect-.8)/.4));
+      spark.scale.setScalar(.8+1.45*layout);spark.position.x=3.2*layout;
       spark.rotation.y=timeSeconds*.13;
-      orbit.visible=frame.chapter!=='spark';orbit.rotation.set(frame.local*.15,timeSeconds*.03,frame.chapter==='convergence'?frame.local*.2:.3);
-      cores.forEach((group,i)=>{group.visible=frame.chapter==='core'&&frame.focusId===coreIds[i];group.rotation.set(.12,timeSeconds*.065,0);group.position.set(camera.aspect>=1.2?2.3:0,.8,-1);group.scale.setScalar(camera.aspect>=1.2?1.35:.85);});
-      const candidates=frame.focusId?[frame.focusId,(frame.chapter==='core'?coreIds:workIds)[((frame.chapter==='core'?coreIds:workIds).indexOf(frame.focusId)+1)%3]]:frame.chapter==='constellation'?projects.filter(p=>p.exhibit?.shots?.length&&!coreIds.includes(p.id)).slice(0,qualityLimits(currentQuality).textures).map(p=>p.id):[];
-      candidates.forEach(id=>loadScreen(projects.find(p=>p.id===id)));
-      let index=0;
-      for(const [id,mesh] of cards){
-        const focused=id===frame.focusId;
-        mesh.visible=focused||frame.chapter==='constellation';
-        mesh.material.opacity=focused?.85:.28;
-        if(focused){mesh.position.set(0,-1.6,1);mesh.rotation.set(-.06,Math.sin(frame.local*Math.PI)*.12,0);mesh.scale.setScalar(.95);}
-        else{const a=index++*2.399963;mesh.position.set(Math.cos(a)*7,Math.sin(a)*3.5,-4-index*.8);mesh.rotation.set(.08,Math.cos(a)*-.35,0);mesh.scale.setScalar(.65);}
+      orbit.rotation.set(.15,timeSeconds*.03,.3);
+      milestone.rotation.y=timeSeconds*.1;
+      cores.forEach((group,i)=>{group.rotation.set(.12,timeSeconds*.065,0);group.position.set(worldPosition(coreIds[i])[0]+2.3*layout,.8,-1);group.scale.setScalar(.85+.5*layout);});
+      const photographed=projects.filter(p=>p.exhibit?.shots?.length);
+      const distance=id=>Math.abs(worldPosition(id)[0]-camera.position.x);
+      const nearby=photographed.slice().sort((a,b)=>distance(a.id)-distance(b.id)||a.id.localeCompare(b.id));
+      const stations=[...workIds,...coreIds],nearest=stations.reduce((best,id)=>distance(id)<distance(best)?id:best,stations[0]),slot=stations.indexOf(nearest);
+      const preferred=frame.progress>=.3?[stations[slot],stations[slot+1],stations[slot-1]].filter(Boolean):[];
+      const candidates=[...new Set([...preferred,...nearby.map(p=>p.id)])].filter(id=>photographed.some(p=>p.id===id)).slice(0,qualityLimits(currentQuality).textures);
+      const wanted=new Set(candidates);
+      const ease=t=>{const x=Math.max(0,Math.min(1,t));return x*x*(3-2*x);};
+      for(const [id,entry] of cache){
+        if(wanted.has(id)&&entry.exitAt!==null){entry.startAlpha=(entry.mesh?.material.opacity||0)/.88;entry.readyAt=lastTime;entry.exitAt=null;}
+        if(!wanted.has(id)&&entry.exitAt===null){entry.exitAt=lastTime;entry.exitAlpha=(entry.mesh?.material.opacity||0)/.88;}
+        if(entry.exitAt!==null&&(!entry.mesh||lastTime-entry.exitAt>=.3)){cache.delete(id);removeEntry(entry);continue;}
+        if(entry.mesh){
+          const alpha=entry.exitAt!==null?entry.exitAlpha*(1-ease((lastTime-entry.exitAt)/.3)):entry.startAlpha+(1-entry.startAlpha)*ease((lastTime-entry.readyAt)/.45);
+          entry.mesh.material.opacity=.88*alpha;
+        }
       }
+      candidates.forEach(id=>loadScreen(photographed.find(p=>p.id===id)));
       if(composer)composer.render();else renderer.render(scene,camera);
     },
     resize(width,height,dpr){if(disposed)return;camera.aspect=Math.max(1,width)/Math.max(1,height);camera.fov=camera.aspect<1?Math.min(105,Math.max(58,2*Math.atan(3.2/(8*camera.aspect))*180/Math.PI)):44;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(dpr||1,qualityLimits(currentQuality).dpr));renderer.setSize(width,height,false);composer?.setSize(width,height);},

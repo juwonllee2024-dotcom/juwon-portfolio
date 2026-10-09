@@ -46,6 +46,29 @@ function backend() {
 }
 const projects=Array.from({length:10},(_,i)=>({id:i===0?'iphone':i===1?'village':'screen-'+i,exhibit:{shots:[{src:'./'+i+'-screen.jpg',alt:'screen',caption:'UI preview'}]}}));
 
+test('sculptures keep their world coordinates and do not toggle existence at chapter boundaries',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.resize(1440,900,1);engine.update(sampleStory(.799999),5);
+  const snapshot=[];b.state.scene.traverse(n=>{if(n.isMesh&&!n.userData.projectId)snapshot.push([n,n.getWorldPosition(new THREE.Vector3()),n.visible]);});
+  engine.update(sampleStory(.800001),5);
+  for(const [n,position,visible] of snapshot){assert.ok(position.distanceTo(n.getWorldPosition(new THREE.Vector3()))<1e-7,'world geometry must not teleport');assert.equal(n.visible,visible,'arrival must come from camera travel, not sudden visibility switches');}
+  engine.dispose();
+});
+
+test('late screenshots fade into fixed positions without a load-completion pop',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.resize(1440,900,1);engine.update(sampleStory(.4),10);
+  assert.ok(b.state.loads.some(r=>r.url==='./1-screen.jpg'),'next station image must be prefetched');
+  b.state.loads.find(r=>r.url==='./0-screen.jpg').success(new THREE.Texture({width:1280,height:720}));
+  engine.update(sampleStory(.4),10);let mesh;b.state.scene.traverse(n=>{if(n.userData.projectId==='iphone')mesh=n;});
+  assert.equal(mesh.material.opacity,0,'new texture starts transparent');
+  const position=mesh.position.clone();
+  engine.update(sampleStory(.4),10.225);assert.ok(mesh.material.opacity>0&&mesh.material.opacity<.85);
+  engine.update(sampleStory(.4),10.5);assert.ok(mesh.material.opacity>=.85);
+  engine.update(sampleStory(.399999),10.5);assert.ok(mesh.position.distanceTo(position)<1e-7,'same image stays anchored when leaving its chapter');
+  engine.dispose();
+});
+
 test('core sculptures use lit reflective surfaces with selective emission and release their studio texture',async()=>{
   const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
   engine.resize(1440,900,2);engine.update(sampleStory(.81),0);
@@ -74,7 +97,7 @@ test('automatic quality downgrade disables costly clearcoat on every physical su
 test('desktop origin sculpture is a substantial object rather than a tiny decorative dot',async()=>{
   const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
   engine.resize(1440,900,1);engine.update(sampleStory(0),0);
-  let spark;b.state.scene.traverse(n=>{if(n.isMesh&&n.geometry.type==='IcosahedronGeometry')spark=n;});
+  let spark;b.state.scene.traverse(n=>{if(n.isMesh&&n.geometry.type==='IcosahedronGeometry'&&n.getWorldPosition(new THREE.Vector3()).x<10)spark=n;});
   const box=new THREE.Box3().setFromObject(spark),xs=[];
   for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z])xs.push(new THREE.Vector3(x,y,z).project(b.state.camera).x);
   assert.ok((Math.max(...xs)-Math.min(...xs))*720>=200,'origin object must occupy at least 200 desktop pixels');
@@ -125,5 +148,20 @@ test('portrait viewport keeps the focused screenshot inside its horizontal frust
     const projected=new THREE.Vector3().fromBufferAttribute(vertices,i).applyMatrix4(mesh.matrixWorld).project(b.state.camera);
     assert.ok(Math.abs(projected.x)<=1,'focused screenshot must not be cropped horizontally');
   }
+  engine.dispose();
+});
+
+test('bounded screenshot cache fades old visible cards out before releasing them',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.update(sampleStory(.2),0);
+  b.state.loads.forEach(r=>r.success(new THREE.Texture({width:1280,height:720})));
+  engine.update(sampleStory(.2),1);const old=[];b.state.scene.traverse(n=>{if(n.userData.projectId)old.push(n);});
+  engine.update(sampleStory(.4),1);
+  assert.ok(old.every(n=>n.parent),'cache change must not delete visible cards in one frame');
+  engine.update(sampleStory(.4),1.15);
+  assert.ok(old.some(n=>n.parent&&n.material.opacity>0&&n.material.opacity<.88),'departing cards fade gradually');
+  engine.update(sampleStory(.4),1.31);
+  assert.ok(old.some(n=>!n.parent),'fully faded cards release their GPU resources');
+  let cards=0;b.state.scene.traverse(n=>{if(n.userData.projectId)cards++;});assert.ok(cards<=4);
   engine.dispose();
 });

@@ -27,6 +27,22 @@ test('core reveal preserves project order without appearing in early scenes', ()
   for(let i=0;i<80;i++) assert.ok(!['kraude','secondbrain3d','antistudy'].includes(module.sampleStory(i/100).focusId));
 });
 
+test('camera travels continuously through fixed exhibition stations across every chapter boundary',()=>{
+  for(const [p,x] of [[.4,14],[.4+.2/3,30],[.4+.4/3,46],[.6,58],[.8,70],[.8+.2/3,90],[.8+.4/3,110]]){
+    const frame=module.sampleStory(p);
+    assert.ok(Math.abs(frame.camera.target[0]-x)<1e-7,'camera must arrive at the next fixed station');
+    for(const field of ['position','target']){
+      const before=module.sampleStory(p-1e-6).camera[field],after=module.sampleStory(p+1e-6).camera[field];
+      assert.ok(Math.hypot(...before.map((n,i)=>n-after[i]))<.01,'camera cannot jump at '+p);
+    }
+  }
+  for(let i=1;i<=1000;i++){
+    const a=module.sampleStory((i-1)/1000),b=module.sampleStory(i/1000);
+    assert.ok(b.camera.target[0]>=a.camera.target[0],'forward scroll follows one ordered world path');
+    assert.deepEqual(module.sampleStory((i-1)/1000),a,'reverse sampling restores the same route');
+  }
+});
+
 test('Korean combining characters and emoji stay intact in typing; missing segmenter keeps whole sentence', () => {
   assert.equal(typeof module.splitGraphemes,'function');
   const segmenter = new Intl.Segmenter('ko',{granularity:'grapheme'});
