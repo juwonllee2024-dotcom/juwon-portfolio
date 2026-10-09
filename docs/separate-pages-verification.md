@@ -14,6 +14,12 @@ Approved scope: the cinematic home ends at the giant JUWON signature. Exhibition
 - Review follow-ups: independently titled documents now use h1 with the existing visual size. The real pre-initialization redirect code is exercised against the browser location boundary; inherited keys such as #constructor initially triggered invalid destinations (RED), then stopped after own-property validation (GREEN).
 - Full suite: 46 tests passed. Static build passed. Whole-module audit: 11 modules, 92 requests, gzip total below 600 KiB. Root and repository-prefix asset checks cover all five documents.
 
+## Introduction journey correction
+
+The owner clarified that Introduction must also present the complete existing 3D journey. `about.html` now includes the same five chapters and three core works as home, then the preserved biography, then the giant JUWON signature. Exhibition, selected work and all-project collections remain separate documents without canvases. The About navigation item stays active and the motion toggle remains available.
+
+The new regression failed before the change because Introduction lacked its canvas; afterward the full suite passed 47 tests. In the local browser, Introduction became `motion-ready motion-layout`, displayed a canvas and five chapters, and reached the giant JUWON finale. A direct `about.html#about` visit positioned the biography below the fixed header and retained readable text. No console errors were observed. Static build and module audit passed. Preview tab and owned server were stopped; unrelated services and published hosts were not changed during this verification.
+
 ## Boundaries
 
 Local verification is not publication. No paid services, dependencies, account settings, public project data, or unrelated localhost servers changed. Browser checks do not guarantee all devices or hardware performance. Collections retain the existing JavaScript requirement for search and dialogs.

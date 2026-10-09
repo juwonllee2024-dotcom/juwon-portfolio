@@ -28,11 +28,21 @@ test('home ends at the signature and each collection has its own reachable docum
       const response=await fetch(base+file);assert.equal(response.status,200,file);
       const html=await response.text();assert.match(html,new RegExp('id="'+id+'"'));
       assert.match(html,/<h1\b[^>]*>[\s\S]+?<\/h1>/,'independent documents need a primary page heading');
-      assert.ok(!html.includes('id="journey"'));assert.ok(!html.includes('<canvas'));
+      if(id!=='about'){assert.ok(!html.includes('id="journey"'));assert.ok(!html.includes('<canvas'));}
       assert.ok(html.includes('aria-current="page"'));
       for(const link of [...html.matchAll(/<nav[^>]*>([\s\S]*?)<\/nav>/g)][0][1].matchAll(/href="([^"]+)"/g)){
         assert.equal((await fetch(new URL(link[1],base+file))).status,200,link[1]);
       }
     }
   }finally{await new Promise(resolve=>server.close(resolve));}
+});
+
+test('introduction includes the complete cinematic journey, biography and final signature',()=>{
+  const html=readFileSync(new URL('../public/about.html',import.meta.url),'utf8');
+  assert.match(html,/<canvas[^>]+id="universe-canvas"/);
+  assert.deepEqual([...html.matchAll(/data-story-chapter="([^"]+)"/g)].map(m=>m[1]),['spark','constellation','work','convergence','core']);
+  assert.deepEqual([...html.matchAll(/data-core-id="([^"]+)"/g)].map(m=>m[1]),['kraude','secondbrain3d','antistudy']);
+  assert.ok(html.includes('id="motion-toggle"'));
+  assert.ok(html.indexOf('id="about"')<html.indexOf('class="universe-signature"'));
+  assert.match(html,/id="about"[\s\S]*?GitHub/);
 });

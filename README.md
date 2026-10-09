@@ -27,7 +27,7 @@ Local preview chooses a free loopback port, without interrupting other projects.
 
 ## Cinematic universe
 
-The home page ends at the giant JUWON signature. Exhibition (`public/works.html`), selected work (`public/selected.html`), all project records (`public/projects.html`), and biography (`public/about.html`) are separate static documents. Shared navigation uses relative file URLs for all three hosts. Collections reuse the catalog, photos, search and detail dialog without loading the 3D renderer. Former home anchors for these four sections redirect to the matching document when JavaScript is available.
+The home page ends at the giant JUWON signature. Exhibition (`public/works.html`), selected work (`public/selected.html`) and all project records (`public/projects.html`) are separate static collection documents without the 3D renderer. Introduction (`public/about.html`) includes the complete cinematic 3D journey, biography and giant JUWON finale. Shared navigation uses relative file URLs for all three hosts. Collections reuse the catalog, photos, search and detail dialog. Former home anchors for these four sections redirect to the matching document when JavaScript is available.
 
 The portfolio now has a progressive-enhancement Three.js journey: spark, constellation, work, convergence and a final KRAUDE / Second Brain 3D / AntiStudy reveal. Existing search, 123 records, 26 exhibitions and reviewed capture labels remain intact. Decorative connections are not claims that the project backends are integrated or currently operating.
 

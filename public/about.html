@@ -10,12 +10,67 @@
   <script type="module" src="./app.mjs"></script>
 </head>
 <body data-page="about">
-  <a class="skip" href="#about">본문으로 건너뛰기</a>
-  <header class="header"><a class="brand" href="./index.html" aria-label="JUWON 홈"><span class="brand-mark">j.</span><span>JUWON<span class="brand-sub">THE WORK / PERSONAL PORTFOLIO</span></span></a><nav aria-label="주 메뉴"><a href="./works.html">작품 전시</a><a href="./selected.html">대표작</a><a href="./projects.html">전체 프로젝트</a><a href="./about.html" aria-current="page">소개 <span>↗</span></a></nav></header>
-  <main class="collection-page">
-    <section id="about" class="section about"><div><p class="eyebrow">03 — THE PERSON BEHIND THE PROJECTS</p><h1>안녕, 나는 주원.<br><span>만드는 사람.</span></h1></div><div class="about-copy"><p>AI가 무엇을 할 수 있는지 궁금해서 도구를 만들고, 더 나은 작업 방식을 찾고 싶어서 시스템을 연결합니다. 그 과정은 코드가 되기도, 영상이 되기도, 하나의 세계가 되기도 합니다.</p><p class="muted">이곳은 완성된 성과만 모은 이력서가 아닙니다. 공개할 수 있는 프로젝트 설명과 기록을 모은 포트폴리오입니다. 모든 작업을 혼자 처음부터 만든 것처럼 소개하지 않습니다. 외부 오픈소스 활용과 가족 협업은 따로 표시합니다.</p><div class="socials"><a href="https://github.com/juwonllee2024-dotcom" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.youtube.com/@%EC%A3%BC%ED%94%BC%ED%8B%B0-JuPT" target="_blank" rel="noopener noreferrer">JuPT ↗</a><a href="https://www.youtube.com/@JuwonLee-k7x" target="_blank" rel="noopener noreferrer">모두를 위한 AI ↗</a></div></div></section>
+  <a class="skip" href="#about">자기소개로 건너뛰기</a>
+  <header class="header"><a class="brand" href="./index.html" aria-label="JUWON 홈"><span class="brand-mark">j.</span><span>JUWON<span class="brand-sub">THE WORK / PERSONAL PORTFOLIO</span></span></a><nav aria-label="주 메뉴"><a href="./works.html">작품 전시</a><a href="./selected.html">대표작</a><a href="./projects.html">전체 프로젝트</a><a href="./about.html" aria-current="page">소개 <span>↗</span></a></nav><button id="motion-toggle" class="motion-toggle" aria-pressed="false">모션 끄기</button></header>
+  <main id="home">
+    <div id="journey" class="journey">
+      <div class="space-stage"><canvas id="universe-canvas" aria-hidden="true"></canvas><div class="space-vignette"></div><div class="space-grain"></div><span class="space-coordinate" aria-hidden="true">JUWON / ORIGIN 001</span><span class="space-progress" aria-hidden="true"><i id="story-meter"></i></span></div>
+      <div class="story-flow">
+        <section class="story-scene spark-scene" data-story-chapter="spark" aria-labelledby="spark-title">
+          <div class="scene-panel spark-panel"><p class="scene-index">A UNIVERSE IN THE MAKING / JUWON</p><p class="spark-hook story-readable" data-type>작은 호기심 하나에서…</p><h1 id="spark-title" class="story-readable" data-reveal>나는<br><em>만들기</em><br>시작했다.</h1><div class="spark-bottom"><p>AI. CODE. WORLDS.<br><span>한 사람의 실험이 세계가 되는 과정.</span></p><a href="./works.html" class="story-link">작품 바로 보기 <span aria-hidden="true">↗</span></a></div><span class="scroll-cue" aria-hidden="true">SCROLL TO EXPLORE <i></i></span></div>
+        </section>
+        <section class="story-scene constellation-scene" data-story-chapter="constellation" aria-labelledby="constellation-title">
+          <div class="scene-panel centered-panel"><p class="scene-index">01 / THE CONSTELLATION</p><h2 id="constellation-title" class="story-readable" data-reveal>하나의 생각.<br><em>끝없는 연결.</em></h2><p class="scene-description">도구를 만들고. 화면을 만들고. 세계를 만들고.<br>서로 다른 실험들이 한 사람의 이야기로 이어진다.</p><div class="orbit-words" aria-hidden="true"><span>TOOLS</span><span>WEB</span><span>GAMES</span><span>AI</span></div><p class="scene-note">실제 프로젝트 캡처를 활용한 공간 연출. 연결선은 상징이며 시스템 통합 완료를 뜻하지 않습니다.</p></div>
+        </section>
+        <section class="work-chapter" data-story-chapter="work" aria-label="상상이 화면이 되는 순간">
+        <article class="work-scene" data-work-id="iphone">
+          <div class="scene-panel work-panel">
+            <div class="scene-copy"><p class="scene-index">THE WORK / 01</p><h2 class="story-readable" data-reveal>iPhone Cinematic 3D</h2><p class="scene-description">시네마틱 3D 기기 웹 데모를 만드는 초기 작업.</p><button class="story-link" data-project="iphone">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./iphone-screen.jpg" alt="iPhone Cinematic 3D의 실제 화면 캡처" loading="lazy" width="1280" height="720"><figcaption><span>실제 UI 캡처 · 미리보기</span>기존 초기 웹페이지 빌드 · 3D 상호작용 미완성</figcaption></figure>
+          </div>
+        </article>
+        <article class="work-scene" data-work-id="village">
+          <div class="scene-panel work-panel">
+            <div class="scene-copy"><p class="scene-index">THE WORK / 02</p><h2 class="story-readable" data-reveal>AI Agent Village</h2><p class="scene-description">AI 직원과 협업 상태를 보여주는 3D·픽셀 회사 세계.</p><button class="story-link" data-project="village">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./village-screen.jpg" alt="AI Agent Village의 실제 화면 캡처" loading="lazy" width="1280" height="720"><figcaption><span>실제 UI 캡처 · 미리보기</span>기존 픽셀 회사 UI · 에이전트 서버 미연결 · 시뮬레이션 미실행</figcaption></figure>
+          </div>
+        </article>
+        <article class="work-scene" data-work-id="yt-korean">
+          <div class="scene-panel work-panel">
+            <div class="scene-copy"><p class="scene-index">THE WORK / 03</p><h2 class="story-readable" data-reveal>YT Korean Studio</h2><p class="scene-description">영상 입력·유튜브 다운로드·한국어 자막·최종 출력·QA를 다루는 웹앱.</p><button class="story-link" data-project="yt-korean">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./yt-korean-screen.jpg" alt="YT Korean Studio의 실제 화면 캡처" loading="lazy" width="1280" height="720"><figcaption><span>실제 UI 캡처 · 미리보기</span>기존 자막 스튜디오 UI · 번역 모델·백엔드 미연결 · 영상 작업 미실행</figcaption></figure>
+          </div>
+        </article>
+        </section>
+        <section class="story-scene convergence-scene" data-story-chapter="convergence" aria-labelledby="convergence-title">
+          <div class="scene-panel centered-panel"><p class="scene-index">02 / THE CONVERGENCE</p><p class="quiet-lead">흩어져 있던 모든 시도들이,</p><h2 id="convergence-title" class="story-readable" data-reveal>그리고,<br><em>하나의 세계가 되었다.</em></h2><p class="quiet-end">이제, 가장 깊이 들어간 작업들.</p></div>
+        </section>
+        <section class="core-chapter" data-story-chapter="core" aria-label="주원의 세 대표작">
+        <article class="core-scene" data-core-id="kraude">
+          <div class="scene-panel core-panel">
+            <div class="scene-copy"><p class="scene-index">THE CORE / 01</p><h2 class="story-readable" data-reveal>KRAUDE</h2><p class="scene-description">3D 시설·미션 관제·에이전트 상태와 모델 실험을 연결한 로컬 세계.</p><button class="story-link" data-project="kraude">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./kraude-land.png" alt="KRAUDE LAND의 연구실·공장·숙소가 보이는 3D 시설 화면" loading="lazy" width="1280" height="720"><figcaption><span>기록된 실제 실행 화면</span>기록된 실제 실행 화면 · 캡처 당시 시설 관람 상태</figcaption></figure>
+          </div>
+        </article>
+        <article class="core-scene" data-core-id="secondbrain3d">
+          <div class="scene-panel core-panel">
+            <div class="scene-copy"><p class="scene-index">THE CORE / 02</p><h2 class="story-readable" data-reveal>Second Brain 3D</h2><p class="scene-description">프로젝트 관계를 뉴런처럼 연결하는 개인 지식 시각화.</p><button class="story-link" data-project="secondbrain3d">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./secondbrain3d-screen.jpg" alt="Second Brain 3D의 실제 화면 캡처" loading="lazy" width="1280" height="720"><figcaption><span>실제 앱 화면 캡처</span>기존 3D 은하 UI · 도구 수와 상태는 저장된 분류 데이터이며 현재 운영 현황을 자동 검증한 값이 아님 · 일부 HUD 배치 미완성</figcaption></figure>
+          </div>
+        </article>
+        <article class="core-scene" data-core-id="antistudy">
+          <div class="scene-panel core-panel">
+            <div class="scene-copy"><p class="scene-index">THE CORE / 03</p><h2 class="story-readable" data-reveal>AntiStudy Mission Engine</h2><p class="scene-description">목표·미션·시도·판정, 온보딩과 AI 연결을 갖춘 실행 관리 웹앱.</p><button class="story-link" data-project="antistudy">작품 기록 보기 <span aria-hidden="true">↗</span></button></div>
+            <figure class="scene-shot"><img src="./antistudy-screen.jpg" alt="AntiStudy Mission Engine의 실제 화면 캡처" loading="lazy" width="1280" height="720"><figcaption><span>실제 UI 캡처 · 미리보기</span>저장된 Mission Engine 랜딩 HTML과 일치하는 빌드 CSS · AI·인증 서버 미연결 · 미션 생성 미실행</figcaption></figure>
+          </div>
+        </article>
+        </section>
+      </div>
+    <section id="about" class="section about journey-biography"><div><p class="eyebrow">03 — THE PERSON BEHIND THE PROJECTS</p><h2>안녕, 나는 주원.<br><span>만드는 사람.</span></h2></div><div class="about-copy"><p>AI가 무엇을 할 수 있는지 궁금해서 도구를 만들고, 더 나은 작업 방식을 찾고 싶어서 시스템을 연결합니다. 그 과정은 코드가 되기도, 영상이 되기도, 하나의 세계가 되기도 합니다.</p><p class="muted">이곳은 완성된 성과만 모은 이력서가 아닙니다. 공개할 수 있는 프로젝트 설명과 기록을 모은 포트폴리오입니다. 모든 작업을 혼자 처음부터 만든 것처럼 소개하지 않습니다. 외부 오픈소스 활용과 가족 협업은 따로 표시합니다.</p><div class="socials"><a href="https://github.com/juwonllee2024-dotcom" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.youtube.com/@%EC%A3%BC%ED%94%BC%ED%8B%B0-JuPT" target="_blank" rel="noopener noreferrer">JuPT ↗</a><a href="https://www.youtube.com/@JuwonLee-k7x" target="_blank" rel="noopener noreferrer">모두를 위한 AI ↗</a></div></div></section>
+      <div class="universe-signature"><p class="scene-index">ONE BUILDER. MANY WORLDS.</p><h2>JUWON<span>.</span></h2><p>STILL BUILDING.</p><a href="./works.html" class="story-link">이제, 모든 작품을 만나보세요 <span aria-hidden="true">↓</span></a></div>
+    </div>
   </main>
   <footer class="compact-footer"><div class="footer-meta"><a href="./index.html">JUWON · HOME</a><span>© 2026 JUWON · THE WORK</span><a href="./motion-licenses.txt" target="_blank" rel="noopener">모션 라이브러리·라이선스</a></div></footer>
   <dialog id="detail" aria-labelledby="detail-title"><div class="detail-top"><span class="eyebrow">PROJECT NOTES</span><button id="close-detail" aria-label="상세 화면 닫기">×</button></div><p id="detail-category" class="detail-category"></p><h2 id="detail-title"></h2><p id="detail-description"></p><div id="detail-media"></div><div id="detail-tags" class="tags"></div><div class="evidence"><h3>현재 기록</h3><p id="detail-status"></p><h3>확인 근거</h3><p id="detail-evidence"></p><p class="muted">자료가 존재한다는 것은 현재 서비스가 운영 중이거나 모든 기능이 완성되었다는 뜻은 아닙니다.</p></div><div id="detail-link"></div></dialog>
-  <noscript><p class="noscript">페이지 소개는 그대로 볼 수 있습니다. 전체 프로젝트 검색과 상세 모달은 JavaScript가 필요합니다.</p></noscript>
+  <noscript><p class="noscript">이야기와 대표작 소개·캡처는 그대로 볼 수 있습니다. 전체 프로젝트 검색과 상세 모달은 JavaScript가 필요합니다.</p></noscript>
 </body></html>
