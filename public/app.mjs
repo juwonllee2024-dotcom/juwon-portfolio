@@ -1,10 +1,13 @@
 import {projects,categoryLabels,filterProjects,exhibitGroups} from './catalog.mjs';
 import {renderExhibitCard,renderExhibitMedia} from './showcase.mjs';
 const $ = s=>document.querySelector(s);
+const legacyPages={works:'works.html',selected:'selected.html',projects:'projects.html',about:'about.html'};
+if(document.body.dataset.page==='home'&&Object.hasOwn(legacyPages,location.hash.slice(1)))location.replace('./'+legacyPages[location.hash.slice(1)]);
 const esc = v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let category='all';
 let exhibitGroup='all';
 const exhibitProjects=projects.filter(p=>p.exhibit).sort((a,b)=>Number(b.exhibit.shots.length>0)-Number(a.exhibit.shots.length>0));
+if($('#works-grid')){
 $('#work-count').textContent=String(exhibitProjects.length);
 $('#work-filters').innerHTML=Object.entries(exhibitGroups).map(([key,label])=>`<button class="filter ${key==='all'?'active':''}" data-exhibit-group="${key}" aria-pressed="${key==='all'}">${esc(label)}</button>`).join('');
 function renderExhibition(){
@@ -15,6 +18,8 @@ function renderExhibition(){
 }
 $('#work-filters').addEventListener('click',e=>{const button=e.target.closest('[data-exhibit-group]');if(!button)return;exhibitGroup=button.dataset.exhibitGroup;for(const b of $('#work-filters').children){const active=b===button;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}renderExhibition();});
 $('#work-search').addEventListener('input',renderExhibition);
+renderExhibition();
+}
 const statusClass=p=>/구상|목표|보류|주제/.test(p.status)?'idea':'';
 const card=p=>`<button class="project-card" data-project="${esc(p.id)}" aria-label="${esc(p.name)} 상세 보기"><div class="card-top"><span class="card-category">${esc(categoryLabels[p.category])}</span><span class="card-arrow">↗</span></div><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="card-bottom"><span>${esc(p.tags[0])}</span><span class="status ${statusClass(p)}">${esc(p.status)}</span></div></button>`;
 const artworks = {
@@ -26,20 +31,21 @@ const artworks = {
   command:`<rect x="43" y="43" width="244" height="148" rx="6" fill="#21291c" stroke="#687956"/><path d="M43 74H287M106 74V191" stroke="#48563b"/><g fill="#829667"><rect x="57" y="56" width="90" height="5" rx="2"/><rect x="56" y="92" width="35" height="5" rx="2"/><rect x="56" y="112" width="29" height="5" rx="2"/><rect x="56" y="132" width="36" height="5" rx="2"/></g><g fill="#34452a"><rect x="119" y="87" width="71" height="41" rx="4"/><rect x="199" y="87" width="71" height="41" rx="4"/><rect x="119" y="139" width="151" height="37" rx="4"/></g><circle cx="132" cy="102" r="4" fill="#c8f36b"/><path d="M133 157h43m12 0h42" stroke="#9cb57e"/>`
 };
 const featuredIds=['kraude','antistudy','lee-relay','token-saver','yt-korean','command'];
-$('#featured').innerHTML=featuredIds.map((id,i)=>{const p=projects.find(p=>p.id===id);return `<button class="featured-card" data-project="${id}" aria-label="${esc(p.name)} 상세 보기"><div class="feature-art" style="background:${id==='lee-relay'?'#1e252c':'#1e251c'}"><span class="art-number">0${i+1}</span><svg viewBox="0 0 330 235" aria-hidden="true">${artworks[id]}</svg><span class="art-caption">CONCEPT VISUAL / NOT A LIVE SCREENSHOT</span></div><div class="featured-info"><p class="eyebrow">${esc(p.tags.join(' / '))}</p><h3>${esc(p.name)}</h3><span class="featured-arrow">↗</span><p>${esc(p.description)}</p></div></button>`}).join('');
-$('#total-count').textContent=String(projects.length);
+if($('#featured'))$('#featured').innerHTML=featuredIds.map((id,i)=>{const p=projects.find(p=>p.id===id);return `<button class="featured-card" data-project="${id}" aria-label="${esc(p.name)} 상세 보기"><div class="feature-art" style="background:${id==='lee-relay'?'#1e252c':'#1e251c'}"><span class="art-number">0${i+1}</span><svg viewBox="0 0 330 235" aria-hidden="true">${artworks[id]}</svg><span class="art-caption">CONCEPT VISUAL / NOT A LIVE SCREENSHOT</span></div><div class="featured-info"><p class="eyebrow">${esc(p.tags.join(' / '))}</p><h3>${esc(p.name)}</h3><span class="featured-arrow">↗</span><p>${esc(p.description)}</p></div></button>`}).join('');
+if($('#total-count'))$('#total-count').textContent=String(projects.length);
+if($('#catalog')){
 $('#filters').innerHTML=Object.entries(categoryLabels).map(([key,label])=>`<button class="filter ${key==='all'?'active':''}" data-category="${key}" aria-pressed="${key==='all'}">${esc(label)}</button>`).join('');
 function render(){const rows=filterProjects(projects,$('#search').value,category);$('#catalog').innerHTML=rows.map(card).join('');$('#results').textContent=`${rows.length}개의 기록 / 전체 ${projects.length}`;$('#empty').hidden=rows.length!==0;}
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;category=b.dataset.category;for(const button of $('#filters').children){const active=button===b;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));}render();});
 $('#search').addEventListener('input',render);
 $('#view').addEventListener('change',e=>$('#catalog').classList.toggle('list',e.target.value==='list'));
 $('#reset').addEventListener('click',()=>{$('#search').value='';$('#filters').querySelector('[data-category="all"]').click();$('#search').focus();});
+render();
+}
 function openDetail(id){const p=projects.find(p=>p.id===id);if(!p)return;$('#detail-category').textContent=p.exhibit?exhibitGroups[p.exhibit.group]:categoryLabels[p.category];$('#detail-title').textContent=p.name;$('#detail-description').textContent=p.description;$('#detail-media').innerHTML=renderExhibitMedia(p);$('#detail-tags').innerHTML=p.tags.map(t=>`<span>${esc(t)}</span>`).join('');$('#detail-status').textContent=p.status;$('#detail-evidence').textContent=p.evidence;$('#detail-link').innerHTML=p.url?`<a class="primary" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${p.status==='외부 도구 활용'?'외부 원작 보기':p.url.startsWith('https://github.com/')?'공개 소스 보기':'관련 링크 열기'} <span>↗</span></a>`:'<p class="detail-unavailable">확인된 공개 데모 링크는 아직 없습니다. 로컬 실행 주소나 개인 작업 경로는 공개하지 않습니다.</p>';$('#detail').showModal();document.body.classList.add('no-scroll');document.dispatchEvent(new Event('portfolio:dialog'));}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-project]');if(b)openDetail(b.dataset.project);});
 $('#close-detail').addEventListener('click',()=>$('#detail').close());
-$('#detail').addEventListener('close',()=>{document.body.classList.remove('no-scroll');document.dispatchEvent(new Event('portfolio:dialog'));if(location.hash.startsWith('#project-'))history.replaceState(null,'','#projects');});
+$('#detail').addEventListener('close',()=>{document.body.classList.remove('no-scroll');document.dispatchEvent(new Event('portfolio:dialog'));if(location.hash.startsWith('#project-'))history.replaceState(null,'',location.pathname);});
 $('#detail').addEventListener('click',e=>{if(e.target!==$('#detail'))return;const r=$('#detail').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)$('#detail').close();});
-document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!$('#detail').open){e.preventDefault();$('#search').focus();}});
-render();
-renderExhibition();
-import('./motion.mjs').then(({startMotion})=>startMotion({root:document,projects})).catch(()=>document.body.classList.add('motion-off'));
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!$('#detail').open&&($('#search')||$('#work-search'))){e.preventDefault();($('#search')||$('#work-search')).focus();}});
+if($('#journey'))import('./motion.mjs').then(({startMotion})=>startMotion({root:document,projects})).catch(()=>document.body.classList.add('motion-off'));

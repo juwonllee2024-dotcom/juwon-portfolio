@@ -44,6 +44,22 @@ html{scroll-padding-top:88px}body{background:#080b09}.header{position:fixed!impo
 }
 
 /* Once enhanced, keep reading geometry stable even when the GPU is released. */
+.collection-page{padding-top:100px;min-height:calc(100svh - 100px)}
+.collection-page h1{font-size:clamp(38px,4.8vw,68px);line-height:1.2;letter-spacing:-.04em;margin:0;font-weight:700}
+.about h1 span{color:var(--lime)}
+@media(max-width:760px){.collection-page h1{font-size:38px}}
+.header nav a[aria-current="page"]{color:var(--lime)}
+.compact-footer{padding:24px 5vw 32px}
+.compact-footer .footer-meta{margin-top:0}
+@media(max-width:760px){
+  .header{height:104px!important;padding:12px 6%!important;gap:10px!important;flex-wrap:wrap;align-content:center}
+  .header nav{order:3;flex-basis:100%;margin:0;justify-content:space-between;gap:8px!important}
+  .header nav a:not(:first-child),.header nav a:last-child{display:block}
+  .motion-toggle{margin-left:auto}
+  html{scroll-padding-top:116px}.journey{padding-top:104px}
+  .collection-page{padding-top:104px}
+}
+@media(max-width:760px){.compact-footer .footer-meta{flex-wrap:wrap;gap:16px}}
 .motion-layout .story-scene,.motion-layout .core-scene,.motion-layout .work-scene{min-height:150svh}
 .motion-layout .scene-panel{position:sticky;top:0;min-height:100svh;height:100svh}
 .motion-layout .spark-panel{padding-top:120px}

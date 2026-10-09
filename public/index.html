@@ -9,15 +9,15 @@
   <link rel="icon" href="./mark.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.mjs"></script>
 </head>
-<body>
-  <a class="skip" href="#projects">프로젝트로 건너뛰기</a>
-  <header class="header"><a class="brand" href="#home" aria-label="JUWON 홈"><span class="brand-mark">j.</span><span>JUWON<span class="brand-sub">THE WORK / PERSONAL PORTFOLIO</span></span></a><nav aria-label="주 메뉴"><a href="#works">작품 전시</a><a href="#selected">대표작</a><a href="#projects">전체 프로젝트</a><a href="#about">소개 <span>↗</span></a></nav><button id="motion-toggle" class="motion-toggle" aria-pressed="false">모션 끄기</button></header>
+<body data-page="home">
+  <a class="skip" href="./projects.html">프로젝트로 건너뛰기</a>
+  <header class="header"><a class="brand" href="./index.html" aria-label="JUWON 홈"><span class="brand-mark">j.</span><span>JUWON<span class="brand-sub">THE WORK / PERSONAL PORTFOLIO</span></span></a><nav aria-label="주 메뉴"><a href="./works.html">작품 전시</a><a href="./selected.html">대표작</a><a href="./projects.html">전체 프로젝트</a><a href="./about.html">소개 <span>↗</span></a></nav><button id="motion-toggle" class="motion-toggle" aria-pressed="false">모션 끄기</button></header>
   <main id="home">
     <div id="journey" class="journey">
       <div class="space-stage"><canvas id="universe-canvas" aria-hidden="true"></canvas><div class="space-vignette"></div><div class="space-grain"></div><span class="space-coordinate" aria-hidden="true">JUWON / ORIGIN 001</span><span class="space-progress" aria-hidden="true"><i id="story-meter"></i></span></div>
       <div class="story-flow">
         <section class="story-scene spark-scene" data-story-chapter="spark" aria-labelledby="spark-title">
-          <div class="scene-panel spark-panel"><p class="scene-index">A UNIVERSE IN THE MAKING / JUWON</p><p class="spark-hook story-readable" data-type>작은 호기심 하나에서…</p><h1 id="spark-title" class="story-readable" data-reveal>나는<br><em>만들기</em><br>시작했다.</h1><div class="spark-bottom"><p>AI. CODE. WORLDS.<br><span>한 사람의 실험이 세계가 되는 과정.</span></p><a href="#works" class="story-link">작품 바로 보기 <span aria-hidden="true">↗</span></a></div><span class="scroll-cue" aria-hidden="true">SCROLL TO EXPLORE <i></i></span></div>
+          <div class="scene-panel spark-panel"><p class="scene-index">A UNIVERSE IN THE MAKING / JUWON</p><p class="spark-hook story-readable" data-type>작은 호기심 하나에서…</p><h1 id="spark-title" class="story-readable" data-reveal>나는<br><em>만들기</em><br>시작했다.</h1><div class="spark-bottom"><p>AI. CODE. WORLDS.<br><span>한 사람의 실험이 세계가 되는 과정.</span></p><a href="./works.html" class="story-link">작품 바로 보기 <span aria-hidden="true">↗</span></a></div><span class="scroll-cue" aria-hidden="true">SCROLL TO EXPLORE <i></i></span></div>
         </section>
         <section class="story-scene constellation-scene" data-story-chapter="constellation" aria-labelledby="constellation-title">
           <div class="scene-panel centered-panel"><p class="scene-index">01 / THE CONSTELLATION</p><h2 id="constellation-title" class="story-readable" data-reveal>하나의 생각.<br><em>끝없는 연결.</em></h2><p class="scene-description">도구를 만들고. 화면을 만들고. 세계를 만들고.<br>서로 다른 실험들이 한 사람의 이야기로 이어진다.</p><div class="orbit-words" aria-hidden="true"><span>TOOLS</span><span>WEB</span><span>GAMES</span><span>AI</span></div><p class="scene-note">실제 프로젝트 캡처를 활용한 공간 연출. 연결선은 상징이며 시스템 통합 완료를 뜻하지 않습니다.</p></div>
@@ -66,20 +66,10 @@
         </article>
         </section>
       </div>
-      <div class="universe-signature"><p class="scene-index">ONE BUILDER. MANY WORLDS.</p><h2>JUWON<span>.</span></h2><p>STILL BUILDING.</p><a href="#works" class="story-link">이제, 모든 작품을 만나보세요 <span aria-hidden="true">↓</span></a></div>
+      <div class="universe-signature"><p class="scene-index">ONE BUILDER. MANY WORLDS.</p><h2>JUWON<span>.</span></h2><p>STILL BUILDING.</p><a href="./works.html" class="story-link">이제, 모든 작품을 만나보세요 <span aria-hidden="true">↓</span></a></div>
     </div>
-    <section id="works" class="section exhibition" aria-labelledby="work-title">
-      <div class="section-head"><div><p class="eyebrow">THE EXHIBITION / REAL PROJECTS</p><h2 id="work-title">화면으로 만나는,<br>내가 만든 작품들.</h2></div><p><strong id="work-count">—</strong>개의 전시 항목 · 미완성·연동 작품 포함<br>3D 세계, 웹앱, 설치형 프로그램을 따로 모았습니다.</p></div>
-      <div class="catalog-toolbar"><div id="work-filters" class="filters" aria-label="작품 종류 선택"></div><label class="search"><span aria-hidden="true">⌕</span><input id="work-search" type="search" placeholder="작품 이름·기능 검색" aria-label="전시 작품 검색"></label></div>
-      <p id="work-results" class="work-results" aria-live="polite"></p><div id="works-grid" class="exhibit-grid"></div><p id="work-empty" class="detail-unavailable" hidden>일치하는 전시 작품이 없습니다. 검색어나 작품 종류를 바꿔보세요.</p>
-      <p class="catalog-note">26개 전시 항목 중 24개에 실제 화면 캡처가 있습니다. 실제 앱 화면·백엔드 미연결 UI 미리보기·과거 기록 캡처를 구분합니다. 생성 이미지와 고객 데이터는 사용하지 않았습니다. 미확보 2개는 상세 화면에 사유를 표시합니다. 소개용 전시이며 프로그램을 이 사이트에서 실행하는 기능은 아닙니다.</p>
-    </section>
-    <section class="index-strip" aria-label="포트폴리오 개요"><div><strong id="total-count">—</strong><span>프로젝트 · 세부 기록</span></div><div><strong>05</strong><span>관심 분야</span></div><p>완성만 전시하지 않습니다.<br><span>프로토타입과 아직 작은 아이디어도, 내 작업의 일부니까.</span></p><a href="#about" aria-label="소개로 이동">↓</a></section>
-    <section id="selected" class="section selected"><div class="section-head"><div><p class="eyebrow">01 — SELECTED WORK</p><h2>지금, 가장 나다운 작업들.</h2></div><p>하나의 도구에서 시작해<br>더 큰 시스템으로 이어지는 대표 프로젝트.</p></div><div id="featured" class="featured-grid"></div></section>
-    <section id="projects" class="section catalog"><div class="section-head"><div><p class="eyebrow">02 — THE FULL COLLECTION</p><h2>모든 아이디어에는<br>자리가 있다.</h2></div><p>제품. 콘텐츠. 에이전트. 게임.<br>한 사람의 작업, 여러 갈래의 가능성.</p></div><div class="catalog-toolbar"><div id="filters" class="filters" aria-label="분야 선택"></div><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="프로젝트, 기술, 아이디어 검색" aria-label="프로젝트 검색"><kbd>/</kbd></label></div><div class="result-bar"><span id="results" aria-live="polite"></span><label>보기 <select id="view" aria-label="프로젝트 보기 방식"><option value="grid">카드</option><option value="list">목록</option></select></label></div><div id="catalog" class="project-grid"></div><div id="empty" class="empty" hidden><h3>아직 없는 조합이야.</h3><p>검색어나 분야를 바꿔보세요.</p><button id="reset">전체 프로젝트 보기 ↗</button></div><p class="catalog-note">프로젝트 계열과 세부 기능·실험을 함께 담았습니다. 항목 수는 완성 제품 수가 아닙니다. 진행률을 임의로 추정하지 않았으며, 상세 화면에 확인 근거를 표시합니다.</p></section>
-    <section id="about" class="section about"><div><p class="eyebrow">03 — THE PERSON BEHIND THE PROJECTS</p><h2>안녕, 나는 주원.<br><span>만드는 사람.</span></h2></div><div class="about-copy"><p>AI가 무엇을 할 수 있는지 궁금해서 도구를 만들고, 더 나은 작업 방식을 찾고 싶어서 시스템을 연결합니다. 그 과정은 코드가 되기도, 영상이 되기도, 하나의 세계가 되기도 합니다.</p><p class="muted">이곳은 완성된 성과만 모은 이력서가 아닙니다. 공개할 수 있는 프로젝트 설명과 기록을 모은 포트폴리오입니다. 모든 작업을 혼자 처음부터 만든 것처럼 소개하지 않습니다. 외부 오픈소스 활용과 가족 협업은 따로 표시합니다.</p><div class="socials"><a href="https://github.com/juwonllee2024-dotcom" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="https://www.youtube.com/@%EC%A3%BC%ED%94%BC%ED%8B%B0-JuPT" target="_blank" rel="noopener noreferrer">JuPT ↗</a><a href="https://www.youtube.com/@JuwonLee-k7x" target="_blank" rel="noopener noreferrer">모두를 위한 AI ↗</a></div></div></section>
   </main>
-  <footer><a class="footer-word" href="#home">KEEP BUILDING<span>↗</span></a><div class="footer-meta"><span>© 2026 JUWON · THE WORK</span><a href="./motion-licenses.txt" target="_blank" rel="noopener">모션 라이브러리·라이선스</a><a href="#home">맨 위로 ↑</a></div></footer>
+  <footer class="compact-footer"><div class="footer-meta"><a href="./index.html">JUWON · HOME</a><span>© 2026 JUWON · THE WORK</span><a href="./motion-licenses.txt" target="_blank" rel="noopener">모션 라이브러리·라이선스</a></div></footer>
   <dialog id="detail" aria-labelledby="detail-title"><div class="detail-top"><span class="eyebrow">PROJECT NOTES</span><button id="close-detail" aria-label="상세 화면 닫기">×</button></div><p id="detail-category" class="detail-category"></p><h2 id="detail-title"></h2><p id="detail-description"></p><div id="detail-media"></div><div id="detail-tags" class="tags"></div><div class="evidence"><h3>현재 기록</h3><p id="detail-status"></p><h3>확인 근거</h3><p id="detail-evidence"></p><p class="muted">자료가 존재한다는 것은 현재 서비스가 운영 중이거나 모든 기능이 완성되었다는 뜻은 아닙니다.</p></div><div id="detail-link"></div></dialog>
   <noscript><p class="noscript">이야기와 대표작 소개·캡처는 그대로 볼 수 있습니다. 전체 프로젝트 검색과 상세 모달은 JavaScript가 필요합니다.</p></noscript>
 </body></html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>작품 전시 · JUWON — The Work</title>
+  <meta name="description" content="주원의 공개 포트폴리오. AI 에이전트, 오픈소스 도구, 영상 제작, 게임, 아직 만드는 중인 야심작들.">
+  <meta name="theme-color" content="#111210"><meta property="og:title" content="JUWON — The Work"><meta property="og:description" content="AI, Code & Worlds. 주원이 직접 만드는 것들의 기록.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="./mark.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body data-page="works">
+  <a class="skip" href="#works">본문으로 건너뛰기</a>
+  <header class="header"><a class="brand" href="./index.html" aria-label="JUWON 홈"><span class="brand-mark">j.</span><span>JUWON<span class="brand-sub">THE WORK / PERSONAL PORTFOLIO</span></span></a><nav aria-label="주 메뉴"><a href="./works.html" aria-current="page">작품 전시</a><a href="./selected.html">대표작</a><a href="./projects.html">전체 프로젝트</a><a href="./about.html">소개 <span>↗</span></a></nav></header>
+  <main class="collection-page">
+    <section id="works" class="section exhibition" aria-labelledby="work-title">
+      <div class="section-head"><div><p class="eyebrow">THE EXHIBITION / REAL PROJECTS</p><h1 id="work-title">화면으로 만나는,<br>내가 만든 작품들.</h1></div><p><strong id="work-count">—</strong>개의 전시 항목 · 미완성·연동 작품 포함<br>3D 세계, 웹앱, 설치형 프로그램을 따로 모았습니다.</p></div>
+      <div class="catalog-toolbar"><div id="work-filters" class="filters" aria-label="작품 종류 선택"></div><label class="search"><span aria-hidden="true">⌕</span><input id="work-search" type="search" placeholder="작품 이름·기능 검색" aria-label="전시 작품 검색"></label></div>
+      <p id="work-results" class="work-results" aria-live="polite"></p><div id="works-grid" class="exhibit-grid"></div><p id="work-empty" class="detail-unavailable" hidden>일치하는 전시 작품이 없습니다. 검색어나 작품 종류를 바꿔보세요.</p>
+      <p class="catalog-note">26개 전시 항목 중 24개에 실제 화면 캡처가 있습니다. 실제 앱 화면·백엔드 미연결 UI 미리보기·과거 기록 캡처를 구분합니다. 생성 이미지와 고객 데이터는 사용하지 않았습니다. 미확보 2개는 상세 화면에 사유를 표시합니다. 소개용 전시이며 프로그램을 이 사이트에서 실행하는 기능은 아닙니다.</p>
+    </section>
+  </main>
+  <footer class="compact-footer"><div class="footer-meta"><a href="./index.html">JUWON · HOME</a><span>© 2026 JUWON · THE WORK</span><a href="./motion-licenses.txt" target="_blank" rel="noopener">모션 라이브러리·라이선스</a></div></footer>
+  <dialog id="detail" aria-labelledby="detail-title"><div class="detail-top"><span class="eyebrow">PROJECT NOTES</span><button id="close-detail" aria-label="상세 화면 닫기">×</button></div><p id="detail-category" class="detail-category"></p><h2 id="detail-title"></h2><p id="detail-description"></p><div id="detail-media"></div><div id="detail-tags" class="tags"></div><div class="evidence"><h3>현재 기록</h3><p id="detail-status"></p><h3>확인 근거</h3><p id="detail-evidence"></p><p class="muted">자료가 존재한다는 것은 현재 서비스가 운영 중이거나 모든 기능이 완성되었다는 뜻은 아닙니다.</p></div><div id="detail-link"></div></dialog>
+  <noscript><p class="noscript">페이지 소개는 그대로 볼 수 있습니다. 전체 프로젝트 검색과 상세 모달은 JavaScript가 필요합니다.</p></noscript>
+</body></html>

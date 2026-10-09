@@ -5,12 +5,15 @@ import {projects} from '../public/catalog.mjs';
 const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
 test('readable journey preserves direct navigation and puts the three core works last',()=>{
   assert.deepEqual([...html.matchAll(/data-story-chapter="([^"]+)"/g)].map(m=>m[1]),['spark','constellation','work','convergence','core']);
-  const story=html.slice(html.indexOf('id="journey"'),html.indexOf('id="works"'));
+  const story=html.slice(html.indexOf('id="journey"'),html.indexOf('</main>'));
   const core=story.slice(story.indexOf('data-story-chapter="core"'));
   assert.deepEqual([...core.matchAll(/data-project="([^"]+)"/g)].map(m=>m[1]),['kraude','secondbrain3d','antistudy']);
   assert.doesNotMatch(story.slice(0,story.indexOf('data-story-chapter="core"')),/KRAUDE|AntiStudy|Second Brain/);
-  for(const id of ['works','selected','projects','about','detail','search','work-search'])assert.ok(html.includes('id="'+id+'"'));
-  assert.match(html,/<a[^>]+href="#works"[^>]*>작품 바로 보기/);
+  for(const [file,ids] of [['index.html',['detail']],['works.html',['works','work-search','detail']],['selected.html',['selected','detail']],['projects.html',['projects','search','detail']],['about.html',['about']]]){
+    const page=readFileSync(new URL('../public/'+file,import.meta.url),'utf8');
+    for(const id of ids)assert.ok(page.includes('id="'+id+'"'));
+  }
+  assert.match(html,/<a[^>]+href="\.\/works.html"[^>]*>작품 바로 보기/);
 });
 test('no-WebGL document contains honest core screenshots, accessible words and motion control',()=>{
   assert.match(html,/<canvas[^>]+aria-hidden="true"/);
