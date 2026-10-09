@@ -11,7 +11,9 @@ export function createFrameMonitor(initial) {
     if(timeMs-start<2000 || last===null || last<start+2000){last=timeMs;return quality;}
     sum+=timeMs-last;last=timeMs;count++;
     if(count===120){
-      slow=sum/count>32+1e-7?slow+1:0;count=0;sum=0;
+      // 30fps browser surfaces are usable at bounded low quality, not a fatal failure.
+      const threshold=quality==='high'?32:50;
+      slow=sum/count>threshold+1e-7?slow+1:0;count=0;sum=0;
       if(quality==='high'&&slow){quality='low';slow=0;}
       else if(quality==='low'&&slow>=2){quality='off';slow=0;}
     }

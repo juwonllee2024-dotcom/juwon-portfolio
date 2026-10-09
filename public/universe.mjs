@@ -98,7 +98,8 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
       composer.addPass(new P.RenderPass(scene,camera));
       composer.addPass(new P.EffectPass(camera,new P.BloomEffect({intensity:.4,luminanceThreshold:.9,mipmapBlur:true}),new P.ToneMappingEffect()));
     }
-    while(cache.size>limits.textures){const [id,entry]=cache.entries().next().value;cache.delete(id);removeEntry(entry);}
+    const nearest=[...cache.entries()].sort(([a],[b])=>Math.abs(worldPosition(a)[0]-camera.position.x)-Math.abs(worldPosition(b)[0]-camera.position.x)||a.localeCompare(b));
+    for(const [id,entry] of nearest.slice(limits.textures)){cache.delete(id);removeEntry(entry);}
   }
   configure();
   function dispose(){
@@ -135,6 +136,7 @@ export async function init({canvas,projects,quality,dependencies,onFailure=()=>{
         if(!wanted.has(id)&&entry.exitAt===null){entry.exitAt=lastTime;entry.exitAlpha=(entry.mesh?.material.opacity||0)/entry.maxOpacity;}
         if(entry.exitAt!==null&&(!entry.mesh||lastTime-entry.exitAt>=.3)){cache.delete(id);removeEntry(entry);continue;}
         if(entry.mesh){
+          entry.mesh.position.set(...worldPosition(id));if(stations.includes(id))entry.mesh.position.x+=2.3*layout;
           const alpha=entry.exitAt!==null?entry.exitAlpha*(1-ease((lastTime-entry.exitAt)/.3)):entry.startAlpha+(1-entry.startAlpha)*ease((lastTime-entry.readyAt)/.45);
           entry.mesh.material.opacity=entry.maxOpacity*alpha;
         }

@@ -38,5 +38,6 @@ test('private browser fixtures simulate failures without exposing repository fil
     assert.equal((await fetch(base+'/reduced/..%2fpackage.json')).status,404);
     assert.equal((await fetch(base+'/storage/')).headers.get('x-test-fixture'),'storage');
     assert.equal((await fetch(base+'/perf/')).status,200);
+    assert.equal((await fetch(base+'/reduced-live/')).headers.get('x-test-fixture'),'reduced-live');
   }finally{await new Promise(resolve=>server.close(resolve));}
 });

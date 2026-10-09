@@ -62,3 +62,13 @@ html{scroll-padding-top:88px}body{background:#080b09}.header{position:fixed!impo
   .motion-layout .scene-panel{position:relative;height:auto;min-height:100svh;justify-content:flex-start;padding-top:110px;padding-bottom:65px}
   .motion-layout .scene-copy{padding-top:0}.motion-layout .scene-shot{height:auto;min-height:200px}
 }
+@media(prefers-reduced-motion:reduce){
+  .motion-layout .story-scene,.motion-layout .core-scene,.motion-layout .work-scene{min-height:150svh!important}
+  .motion-layout .scene-panel{position:sticky!important;height:100svh!important;min-height:100svh!important}
+}
+@media(prefers-reduced-motion:reduce) and (max-width:760px){
+  .motion-layout .story-scene,.motion-layout .core-scene,.motion-layout .work-scene{min-height:125svh!important}
+}
+@media(prefers-reduced-motion:reduce) and (max-height:560px){
+  .motion-layout .scene-panel{position:relative!important;height:auto!important;min-height:100svh!important}
+}

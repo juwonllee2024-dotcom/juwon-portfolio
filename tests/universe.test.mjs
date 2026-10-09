@@ -20,9 +20,9 @@ test('quality monitor degrades only after visible, warmed-up complete slow windo
   for(let i=0;i<120;i++) monitor.record({timeMs:time+=32.1,visible:true});
   assert.equal(monitor.record({timeMs:time,visible:true}),'low');
   for(let i=0;i<120;i++) monitor.record({timeMs:time+=16,visible:true});
-  for(let i=0;i<120;i++) monitor.record({timeMs:time+=33,visible:true});
+  for(let i=0;i<120;i++) monitor.record({timeMs:time+=64,visible:true});
   assert.equal(monitor.record({timeMs:time,visible:true}),'low');
-  for(let i=0;i<120;i++) monitor.record({timeMs:time+=33,visible:true});
+  for(let i=0;i<120;i++) monitor.record({timeMs:time+=64,visible:true});
   assert.equal(monitor.record({timeMs:time,visible:true}),'off');
 });
 test('hidden time and resume are not counted as slow frames',()=>{
@@ -31,6 +31,12 @@ test('hidden time and resume are not counted as slow frames',()=>{
   monitor.reset(0);
   monitor.record({timeMs:100000,visible:false});
   for(let i=0;i<45;i++) assert.equal(monitor.record({timeMs:100010+i*40,visible:true}),'high');
+});
+
+test('a stable 30fps browser keeps the bounded low-quality scene instead of disabling all 3D',()=>{
+  const monitor=policy.createFrameMonitor('low');monitor.reset(0);let time=2100;monitor.record({timeMs:time,visible:true});
+  for(let i=0;i<600;i++)monitor.record({timeMs:time+=33.2,visible:true});
+  assert.equal(monitor.record({timeMs:time,visible:true}),'low','30fps is a usable rendering cadence, not a fatal graphics failure');
 });
 function backend() {
   const state={renders:0,disposes:0,loads:[],scene:null,pixelRatio:null};
@@ -163,6 +169,15 @@ test('portrait viewport keeps the focused screenshot inside its horizontal frust
   engine.dispose();
 });
 
+test('desktop station screens leave the reading column clear while staying mounted in their world',async()=>{
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.resize(1440,900,1);engine.update(sampleStory(.4),0);
+  b.state.loads.find(r=>r.url==='./0-screen.jpg').success(new THREE.Texture({width:1280,height:720}));engine.update(sampleStory(.4),1);
+  let screen;b.state.scene.traverse(n=>{if(n.userData.projectId==='iphone')screen=n;});const vertices=screen.geometry.getAttribute('position');
+  for(let i=0;i<vertices.count;i++){const p=new THREE.Vector3().fromBufferAttribute(vertices,i).applyMatrix4(screen.matrixWorld).project(b.state.camera);assert.ok(p.x>=-.1,'screen must not cover the left reading column');}
+  engine.dispose();
+});
+
 test('bounded screenshot cache fades old visible cards out before releasing them',async()=>{
   const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects,quality:'low',dependencies:{THREE:b.THREE,postprocessing:null}});
   engine.update(sampleStory(.2),0);
@@ -177,4 +192,13 @@ test('bounded screenshot cache fades old visible cards out before releasing them
   assert.ok(old.some(n=>!n.parent),'fully faded cards release their GPU resources');
   let cards=0;b.state.scene.traverse(n=>{if(n.userData.projectId)cards++;});assert.ok(cards<=4);
   engine.dispose();
+});
+
+test('quality downgrade preserves the nearest artwork instead of evicting the active screen',async()=>{
+  const gallery=['iphone','village','yt-korean','kraude','secondbrain3d','antistudy','extra-a','extra-b','extra-c'].map(id=>({id,exhibit:{shots:[{src:'./'+id+'-screen.jpg'}]}}));
+  const b=backend(),engine=await universe.init({canvas:new EventTarget(),projects:gallery,quality:'high',dependencies:{THREE:b.THREE,postprocessing:null}});
+  engine.update(sampleStory(.81),0);b.state.loads.forEach(r=>r.success(new THREE.Texture({width:1280,height:720})));engine.update(sampleStory(.81),1);
+  let active;b.state.scene.traverse(n=>{if(n.userData.projectId==='kraude')active=n;});assert.ok(active);
+  engine.setQuality('low');assert.ok(active.parent,'viewed screenshot must survive budget reduction');
+  let count=0;b.state.scene.traverse(n=>{if(n.userData.projectId)count++;});assert.ok(count<=4);engine.dispose();
 });
