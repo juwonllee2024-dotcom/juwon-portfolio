@@ -1,3 +1,33 @@
+<!-- JUWON-PORTFOLIO-INTRO:START -->
+# JuPT Portfolio
+
+![JuPT Portfolio — portfolio visual](docs/portfolio-preview.jpg)
+
+*Recorded public portfolio landing page from an earlier deployment, before the image collection was added.*
+
+*공개 포트폴리오 첫 화면 · 이미지 추가 전 배포 기록*
+
+## English
+
+JUWON's independent static portfolio: a cinematic 3D introduction, selected works, visual exhibits, and a searchable collection of projects and ideas. Source is maintained on GitHub.
+
+[View JUWON's portfolio](https://jupt.pages.dev/) · [Browse the project collection](https://jupt.pages.dev/projects)
+
+**Scope:** This README presents the repository's documented intent and recorded visual evidence. It does not certify that every feature is complete, deployed, or currently working. Follow the original setup, safety, and license documentation below.
+
+## 한국어
+
+독립 정적 웹사이트. 기존 작품·아이디어 기록을 보존하며 실제 화면 작품을 별도로 전시합니다.
+
+[JUWON 포트폴리오 보기](https://jupt.pages.dev/) · [전체 프로젝트 보기](https://jupt.pages.dev/projects)
+
+**확인 범위:** 저장소의 문서상 목적과 기록된 화면 근거를 소개합니다. 모든 기능의 완성·배포·현재 정상 작동을 보증하지 않습니다. 설치법·안전 주의사항·라이선스는 아래 기존 문서를 확인하세요.
+<!-- JUWON-PORTFOLIO-INTRO:END -->
+
+---
+
+## Original documentation / 기존 문서
+
 # JUWON — The Work
 
 Independent public portfolio. Source belongs in **juwonllee2024-dotcom/juwon-portfolio**. The owner approved **Cloudflare Pages** at **jupt.pages.dev** as the primary host, while preserving **GitHub Pages** and **Cloudflare Workers Static Assets** as mirrors. No ChatGPT Sites manifest, database, paid AI API, or ChatGPT-hosted runtime is required. No private conversation export is included.
